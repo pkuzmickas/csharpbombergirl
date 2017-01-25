@@ -1,0 +1,9 @@
+U:\pacman\BomberGirl\BomberGirl\bin\Debug\BomberGirl.exe.config
+U:\pacman\BomberGirl\BomberGirl\bin\Debug\BomberGirl.exe
+U:\pacman\BomberGirl\BomberGirl\bin\Debug\BomberGirl.pdb
+U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.csprojResolveAssemblyReference.cache
+U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.Form1.resources
+U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.Properties.Resources.resources
+U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.csproj.GenerateResource.Cache
+U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.exe
+U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.pdb

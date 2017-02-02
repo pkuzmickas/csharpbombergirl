@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BomberGirl
 {
-    class Player
+    public class Player
     {
         
         public Image spriteSheet {get;set;}
@@ -15,8 +15,14 @@ namespace BomberGirl
         const int SPRITE_AMOUNT = 8;
 
         public Rectangle currentSprite { get; set; }
-        public float posX { get; set; }
-        public float posY { get; set; }
+        public float posX;
+        public float posY;
+        public bool moving_left = false;
+        public bool moving_right = false;
+        public bool moving_up = false;
+        public bool moving_down = false;
+
+
         public Player(int ID)
         {
             this.ID = ID;

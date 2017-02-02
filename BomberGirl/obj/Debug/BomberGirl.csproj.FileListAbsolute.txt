@@ -7,3 +7,12 @@ U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.Properties.Resources.resour
 U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.csproj.GenerateResource.Cache
 U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.exe
 U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.pdb
+C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\bin\Debug\BomberGirl.exe.config
+C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debug\BomberGirl.exe
+C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debug\BomberGirl.pdb
+C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\bin\Debug\BomberGirl.exe
+C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\bin\Debug\BomberGirl.pdb
+C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debug\BomberGirl.csprojResolveAssemblyReference.cache
+C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debug\BomberGirl.Form1.resources
+C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debug\BomberGirl.Properties.Resources.resources
+C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debug\BomberGirl.csproj.GenerateResource.Cache

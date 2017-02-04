@@ -16,20 +16,19 @@ namespace BomberGirl
     class Grid
     {
         private int[,] Board;
-        private const int BOARD_WIDTH = 15;
-        private const int BOARD_HEIGHT = 13;
+        
         Random r = new Random();
         int numOfBoxes = 0;
         public Grid()
         {
-            Board = new int[BOARD_WIDTH, BOARD_HEIGHT];
-            for (int i = 0; i < BOARD_WIDTH; i++)
+            Board = new int[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
+            for (int i = 0; i < Constants.BOARD_WIDTH; i++)
             {
-                for (int j = 0; j < BOARD_HEIGHT; j++)
+                for (int j = 0; j < Constants.BOARD_HEIGHT; j++)
                 {
-                    if ((i == 0 || i == BOARD_WIDTH - 1 || j == 0 || j == BOARD_HEIGHT - 1) || i > 1 && i < BOARD_WIDTH - 2 && j > 1 && j < BOARD_HEIGHT - 2 && i % 2 == 0 && j % 2 == 0) Board[i, j] = 1;
+                    if ((i == 0 || i == Constants.BOARD_WIDTH - 1 || j == 0 || j == Constants.BOARD_HEIGHT - 1) || i > 1 && i < Constants.BOARD_WIDTH - 2 && j > 1 && j < Constants.BOARD_HEIGHT - 2 && i % 2 == 0 && j % 2 == 0) Board[i, j] = 1;
                     else Board[i, j] = 0;
-                    if (Board[i, j] == 0 && ((i > 1 && j > 1 && i < BOARD_WIDTH - 2 && j < BOARD_HEIGHT - 2) || (j == 1 && i > 3 && i < BOARD_WIDTH - 4) || (i == 1 && j > 3 && j < BOARD_HEIGHT - 4) || (i == BOARD_WIDTH - 2 && j > 3 && j < BOARD_HEIGHT - 4) || (j == BOARD_HEIGHT-2 && i > 3 && i < BOARD_WIDTH - 4)))
+                    if (Board[i, j] == 0 && ((i > 1 && j > 1 && i < Constants.BOARD_WIDTH - 2 && j < Constants.BOARD_HEIGHT - 2) || (j == 1 && i > 3 && i < Constants.BOARD_WIDTH - 4) || (i == 1 && j > 3 && j < Constants.BOARD_HEIGHT - 4) || (i == Constants.BOARD_WIDTH - 2 && j > 3 && j < Constants.BOARD_HEIGHT - 4) || (j == Constants.BOARD_HEIGHT-2 && i > 3 && i < Constants.BOARD_WIDTH - 4)))
                     {
                         if (r.Next(2) == 0) {
                             Board[i, j] = 2;
@@ -42,11 +41,11 @@ namespace BomberGirl
             }
             while (numOfBoxes < 70)
             {
-                for (int i = 0; i < BOARD_WIDTH; i++)
+                for (int i = 0; i < Constants.BOARD_WIDTH; i++)
                 {
-                    for (int j = 0; j < BOARD_HEIGHT; j++)
+                    for (int j = 0; j < Constants.BOARD_HEIGHT; j++)
                     {
-                        if (Board[i, j] == 0 && ((i > 1 && j > 1 && i < BOARD_WIDTH - 2 && j < BOARD_HEIGHT - 2) || (j == 1 && i > 3 && i < BOARD_WIDTH - 4) || (i == 1 && j > 3 && j < BOARD_HEIGHT - 4) || (i == BOARD_WIDTH - 2 && j > 3 && j < BOARD_HEIGHT - 4) || (j == BOARD_HEIGHT - 2 && i > 3 && i < BOARD_WIDTH - 4)))
+                        if (Board[i, j] == 0 && ((i > 1 && j > 1 && i < Constants.BOARD_WIDTH - 2 && j < Constants.BOARD_HEIGHT - 2) || (j == 1 && i > 3 && i < Constants.BOARD_WIDTH - 4) || (i == 1 && j > 3 && j < Constants.BOARD_HEIGHT - 4) || (i == Constants.BOARD_WIDTH - 2 && j > 3 && j < Constants.BOARD_HEIGHT - 4) || (j == Constants.BOARD_HEIGHT - 2 && i > 3 && i < Constants.BOARD_WIDTH - 4)))
                         {
                             if (r.Next(2) == 0)
                             {
@@ -59,9 +58,9 @@ namespace BomberGirl
                     }
                 }
             }
-            for (int i = 0; i < BOARD_HEIGHT; i++)
+            for (int i = 0; i < Constants.BOARD_HEIGHT; i++)
             {
-                for (int j = 0; j < BOARD_WIDTH; j++)
+                for (int j = 0; j < Constants.BOARD_WIDTH; j++)
                 {
                     Console.Write(Board[j, i] + " ");
 
@@ -78,11 +77,11 @@ namespace BomberGirl
 
         public int getGridWidth()
         {
-            return BOARD_WIDTH;
+            return Constants.BOARD_WIDTH;
         }
         public int getGridHeight()
         {
-            return BOARD_HEIGHT;
+            return Constants.BOARD_HEIGHT;
         }
 
         

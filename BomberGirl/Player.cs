@@ -11,7 +11,8 @@ namespace BomberGirl
     {
         
         public Image spriteSheet {get;set;}
-        int ID;
+        private int ID;
+        private int Lives = 3;
         const int SPRITE_AMOUNT = 8;
 
         public Rectangle currentSprite { get; set; }
@@ -22,6 +23,8 @@ namespace BomberGirl
         public bool moving_up = false;
         public bool moving_down = false;
         public bool justBombed = false;
+        public bool takingDamage = false;
+        public bool dead = false;
 
         private int placedBombs = 0, maxBombs = 1, xplosionSize = 2;
 
@@ -47,6 +50,17 @@ namespace BomberGirl
             this.ID = ID;
             spriteSheet = Image.FromFile("Sprites/players.png");
             
+        }
+
+        public int id
+        {
+            get { return ID;}
+        }
+
+        public int lives
+        {
+            get { return Lives; }
+            set { Lives = value; }
         }
     }
 }

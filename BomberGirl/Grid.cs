@@ -10,6 +10,7 @@ namespace BomberGirl
     0 - GRASS
     1 - WALL
     2 - BOX
+    3 - BOMB
      
  */
     class Grid

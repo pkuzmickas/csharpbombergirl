@@ -21,6 +21,25 @@ namespace BomberGirl
         public bool moving_right = false;
         public bool moving_up = false;
         public bool moving_down = false;
+        public bool justBombed = false;
+
+        private int placedBombs = 0, maxBombs = 1, xplosionSize = 2;
+
+        public int bombsPlaced
+        {
+            get { return placedBombs; }
+            set { placedBombs = value; }
+        }
+        public int bombLimit
+        {
+            get { return maxBombs; }
+            set { maxBombs = value; }
+        }
+        public int explosionSize
+        {
+            get { return xplosionSize; }
+            set { xplosionSize = value; }
+        }
 
 
         public Player(int ID)

@@ -17,5 +17,6 @@ namespace BomberGirl
         public const int BOARD_WIDTH = 15;
         public const int BOARD_HEIGHT = 13;
         public const int BOMB_TIMER_IN_SECONDS = 2;
+        public const int PICKUPS = 5;
     }
 }

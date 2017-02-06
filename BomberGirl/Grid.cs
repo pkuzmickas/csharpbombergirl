@@ -3,20 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Drawing;
 namespace BomberGirl
 {
-    /*
+ /*
+     
+     * FOR THE MAIN BOARD
     0 - GRASS
     1 - WALL
     2 - BOX
     3 - BOMB
      
  */
+
+/*
+     
+     * FOR THE POWERUP BOARD
+    0 - EMPTY
+    1 - EXTRA FLAME PICKUP
+    2 - EXTRA BOMB PICKUP
+    3 - EXTRA SPEED PICKUP
+    4 - EXTRA LIFE PICKUP
+     
+*/
     class Grid
     {
         private int[,] Board;
-        
+        private int[,] PowerUpBoard;
         Random r = new Random();
         int numOfBoxes = 0;
         public Grid()
@@ -39,6 +52,10 @@ namespace BomberGirl
                     }
                 }
             }
+            
+            Point[,] powerups = new Point[Constants.PICKUPS*4,Constants.PICKUPS*4];
+
+            //int r.Next(0, 70);
             while (numOfBoxes < 70)
             {
                 for (int i = 0; i < Constants.BOARD_WIDTH; i++)

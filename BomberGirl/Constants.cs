@@ -9,7 +9,7 @@ namespace BomberGirl
     class Constants
     {
         public const int SPRITE_SIZE = 42;
-        public const int SPEED = 1500;
+        public const int SPEED = 1;
         public const int COLLISION_ERROR = 9;
         public const int NUMBER_OF_BOMBS = 10;
         public const int SCREEN_X = 629;
@@ -17,6 +17,7 @@ namespace BomberGirl
         public const int BOARD_WIDTH = 15;
         public const int BOARD_HEIGHT = 13;
         public const int BOMB_TIMER_IN_SECONDS = 2;
-        public const int PICKUPS = 5;
+        public const int POWERUPS = 4;
+        public const int PICKUPS_EACH = 4;
     }
 }

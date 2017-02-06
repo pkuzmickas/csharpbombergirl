@@ -18,20 +18,28 @@ namespace BomberGirl
 
     public partial class Form1 : Form
     {
+        Form lastForm;
         private Graphics gc;
         Player player1, player2;
         Grid grid;
         int[,] Board;
+        int[,] PowerupBoard;
         bool[,] ExplosionBoard;
+        bool[,] drawingPowerupsBoard;
 
         Image wall = Image.FromFile("Sprites/wall.png");
         Image grass = Image.FromFile("Sprites/grass.png");
         Image box = Image.FromFile("Sprites/box.png");
         Image bombs = Image.FromFile("Sprites/bombs.png");
         Image explosion = Image.FromFile("Sprites/explosion.png");
+        Image extraBomb = Image.FromFile("Sprites/extraBomb.png");
+        Image extraFlame = Image.FromFile("Sprites/extraFlame.png");
+        Image extraLife = Image.FromFile("Sprites/extraLife.png");
+        Image extraSpeed = Image.FromFile("Sprites/extraSpeed.png");
 
-        Stopwatch deltaTime = new Stopwatch();
 
+        //Stopwatch deltaTime = new Stopwatch();
+        int deltaTime = 1;
         public struct Bomb
         {
             public int col, row;
@@ -39,22 +47,25 @@ namespace BomberGirl
             
         }
 
-        public Form1()
+        public Form1(Form lastForm)
         {
             InitializeComponent();
-
-            deltaTime.Start();
+            this.lastForm = lastForm;
+            //deltaTime.Start();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             grid = new Grid();
             gc = this.CreateGraphics();
             this.Show();
             Board = grid.getGrid();
+            PowerupBoard = grid.getPowerupGrid();
             ExplosionBoard = new bool[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
+            drawingPowerupsBoard = new bool[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
             for (int i = 0; i < Constants.BOARD_WIDTH; i++)
             {
                 for(int j=0; j < Constants.BOARD_HEIGHT; j++)
                 {
-                    ExplosionBoard[i, j] = false; 
+                    ExplosionBoard[i, j] = false;
+                    drawingPowerupsBoard[i, j] = false;
                 }
             }
 
@@ -76,16 +87,18 @@ namespace BomberGirl
         public void updatePlayer(Player player)
         {
 
-           // Console.WriteLine(col + " " + row);
+           
+
+
             if (player.moving_left)
             {
-                int col = (int)((player.posX-(float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE);
+                int col = (int)((player.posX-(float)Constants.SPEED*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE);
                 int row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                 int row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                 if ((Board[col, row1] == 0 && Board[col, row2] == 0) || (player.justBombed && ((Board[col, row1] == 3 && Board[col, row2] == 3) || (Board[col, row1] == 3 && Board[col, row2] == 0) || (Board[col, row1] == 0 && Board[col, row2] == 3))))
                 {
-                    player.posX -= (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000;
-                    col = (int)((player.posX - (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE);
+                    player.posX -= (float)Constants.SPEED*deltaTime/*.ElapsedMilliseconds/1000*/;
+                    col = (int)((player.posX - (float)Constants.SPEED*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE);
                     row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                     row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                     if (Board[col, row1] == 0 && Board[col, row2] == 0)
@@ -98,13 +111,13 @@ namespace BomberGirl
             }
             if(player.moving_right)
             {
-                int col = (int)((player.posX + (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE);
+                int col = (int)((player.posX + (float)Constants.SPEED*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE);
                 int row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                 int row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                 if ((Board[col+1, row1] == 0 && Board[col+1, row2] == 0) || (player.justBombed && ((Board[col+1, row1] == 3 && Board[col+1, row2] == 3) || (Board[col+1, row1] == 3 && Board[col+1, row2] == 0) || (Board[col+1, row1] == 0 && Board[col+1, row2] == 3))))
                 {
-                    player.posX += (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000;
-                    col = (int)((player.posX + (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE);
+                    player.posX += (float)Constants.SPEED*deltaTime/*.ElapsedMilliseconds/1000*/;
+                    col = (int)((player.posX + (float)Constants.SPEED*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE);
                     row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                     row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                     if (Board[col+1, row1] == 0 && Board[col+1, row2] == 0)
@@ -117,17 +130,17 @@ namespace BomberGirl
             {
                 int col1 = (int)((player.posX + Constants.COLLISION_ERROR)  / Constants.SPRITE_SIZE);
                 int col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
-                int row = (int)((player.posY - (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE - 2);
+                int row = (int)((player.posY - (float)Constants.SPEED*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE - 2);
                 if ((Board[col1, row] == 0 && Board[col2, row] == 0) || (player.justBombed && ((Board[col1, row] == 3 && Board[col2, row] == 3) || (Board[col1, row] == 3 && Board[col2, row] == 0) || (Board[col1, row] == 0 && Board[col2, row] == 3))))
                 {
                     col1 = (int)((player.posX + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
                     col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
-                    row = (int)((player.posY - (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE - 2);
+                    row = (int)((player.posY - (float)Constants.SPEED*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE - 2);
                     if (Board[col1, row] == 0 && Board[col2, row] == 0)
                     {
                         player.justBombed = false;
                     }
-                    player.posY -= (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000;
+                    player.posY -= (float)Constants.SPEED*deltaTime/*.ElapsedMilliseconds/1000*/;
                 }
                 
             }
@@ -135,13 +148,13 @@ namespace BomberGirl
             {
                 int col1 = (int)((player.posX + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
                 int col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
-                int row = (int)((player.posY + (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE - 2);
+                int row = (int)((player.posY + (float)Constants.SPEED*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE - 2);
                 if ((Board[col1, row+1] == 0 && Board[col2, row+1] == 0) || (player.justBombed && ((Board[col1, row+1] == 3 && Board[col2, row+1] == 3) || (Board[col1, row+1] == 3 && Board[col2, row+1] == 0) || (Board[col1, row+1] == 0 && Board[col2, row+1] == 3))))
                 {
-                    player.posY += (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000;
+                    player.posY += (float)Constants.SPEED*deltaTime/*.ElapsedMilliseconds/1000*/;
                     col1 = (int)((player.posX + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
                     col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
-                    row = (int)((player.posY + (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE - 2);
+                    row = (int)((player.posY + (float)Constants.SPEED*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE - 2);
                     if (Board[col1, row+1] == 0 && Board[col2, row+1] == 0)
                     {
                         player.justBombed = false;
@@ -176,7 +189,13 @@ namespace BomberGirl
                     }
                 }
             }
-
+            int c = (int)(player.posX + Constants.SPRITE_SIZE/2) / Constants.SPRITE_SIZE;
+            int r = (int)(player.posY + Constants.SPRITE_SIZE/2) / Constants.SPRITE_SIZE - 2;
+            if (drawingPowerupsBoard[c, r])
+            {
+                drawingPowerupsBoard[c, r] = false;
+            }
+            Console.WriteLine(c + " " + r);
             Invalidate();
         }
 
@@ -184,7 +203,6 @@ namespace BomberGirl
         {
             ((System.Timers.Timer)source).Enabled = false;
             player.takingDamage = false;
-            Console.WriteLine("I'm okay :)");
         }
 
      
@@ -192,12 +210,12 @@ namespace BomberGirl
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics dc = e.Graphics;
-            deltaTime.Stop();
+            //deltaTime.Stop();
             draw(dc);
             updatePlayer(player1);
             updatePlayer(player2);
-            deltaTime.Reset();
-            deltaTime.Start();
+            //deltaTime.Reset();
+            //deltaTime.Start();
             
             base.OnPaint(e);
         }
@@ -256,9 +274,24 @@ namespace BomberGirl
 
             if (e.KeyCode == Keys.P)
             {
-                float col = (float)(player1.posX / Constants.SPRITE_SIZE);
-                float row = (float)(player1.posY / Constants.SPRITE_SIZE - 2);
-                Console.WriteLine(col + " " + row);
+                for (int i = 0; i < Constants.BOARD_HEIGHT; i++)
+                {
+                    for (int j = 0; j < Constants.BOARD_WIDTH; j++)
+                    {
+                        Console.Write(Board[j, i] + " ");
+                    }
+                    Console.WriteLine();
+                }
+                Console.WriteLine();
+                Console.WriteLine();
+                for (int i = 0; i < Constants.BOARD_HEIGHT; i++)
+                {
+                    for (int j = 0; j < Constants.BOARD_WIDTH; j++)
+                    {
+                        Console.Write(PowerupBoard[j, i] + " ");
+                    }
+                    Console.WriteLine();
+                }
             }
         }
 
@@ -347,7 +380,10 @@ namespace BomberGirl
                 if (Board[i, bomb.row] == 2)
                 {
                     Board[i, bomb.row] = 0;
-
+                    if (PowerupBoard[i, bomb.row] > 0)
+                    {
+                        drawingPowerupsBoard[i, bomb.row] = true;
+                    }
                     break;
                 }
                 else if (Board[i, bomb.row] == 1) break;
@@ -358,6 +394,10 @@ namespace BomberGirl
                 if (Board[i, bomb.row] == 2)
                 {
                     Board[i, bomb.row] = 0;
+                    if (PowerupBoard[i, bomb.row] > 0)
+                    {
+                        drawingPowerupsBoard[i, bomb.row] = true;
+                    }
                     break;
                 }
                 else if (Board[i, bomb.row] == 1) break;
@@ -369,6 +409,10 @@ namespace BomberGirl
                 if (Board[bomb.col, i] == 2)
                 {
                     Board[bomb.col, i] = 0;
+                    if (PowerupBoard[bomb.col, i] > 0)
+                    {
+                        drawingPowerupsBoard[bomb.col, i] = true;
+                    }
                     break;
                 }
                 else if (Board[bomb.col, i] == 1) break;
@@ -380,6 +424,10 @@ namespace BomberGirl
                 if (Board[bomb.col, i] == 2)
                 {
                     Board[bomb.col, i] = 0;
+                    if (PowerupBoard[bomb.col, i] > 0)
+                    {
+                        drawingPowerupsBoard[bomb.col, i] = true;
+                    }
                     break;
                 }
                 else if (Board[bomb.col, i] == 1) break;
@@ -414,6 +462,33 @@ namespace BomberGirl
                         gc.DrawImage(box, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
 
                     }
+                    
+                    if (drawingPowerupsBoard[i, j])
+                    {
+                        switch (PowerupBoard[i, j])
+                        {
+                            case 1:
+                                {
+                                    gc.DrawImage(extraFlame, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    gc.DrawImage(extraBomb, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
+                                    break;
+                                }
+                            case 3:
+                                {
+                                    gc.DrawImage(extraSpeed, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
+                                    break;
+                                }
+                            case 4:
+                                {
+                                    gc.DrawImage(extraLife, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
+                                    break;
+                                }
+                        }
+                    }
                     if (Board[i, j] == 3)
                     {
                         gc.DrawImage(bombs, new Rectangle(i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE - 2, Constants.SPRITE_SIZE - 2), new Rectangle(0, 0, 16, 16), GraphicsUnit.Pixel);
@@ -421,11 +496,10 @@ namespace BomberGirl
                     if (ExplosionBoard[i, j] == true)
                     {
                         gc.DrawImage(explosion, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
-
                     }
+                    
                 }
             }
-
 
             if (!player1.dead)
             {
@@ -452,7 +526,8 @@ namespace BomberGirl
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/mainmenu.png");
             ((PictureBox)sender).Refresh();
-            Application.Restart();
+            lastForm.Show();
+            this.Dispose();
         }
         
         private void Form1_KeyUp(object sender, KeyEventArgs e)

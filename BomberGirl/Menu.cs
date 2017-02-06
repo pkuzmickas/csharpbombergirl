@@ -46,7 +46,7 @@ namespace BomberGirl
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/2playerButton.png");
             this.Hide();
-            new Form1();
+            new Form1(this);
         }
 
         private void pictureBox3_MouseDown(object sender, MouseEventArgs e)

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Timers;
+using System.Diagnostics;
 
 namespace BomberGirl
 {
@@ -29,7 +30,7 @@ namespace BomberGirl
         Image bombs = Image.FromFile("Sprites/bombs.png");
         Image explosion = Image.FromFile("Sprites/explosion.png");
 
-
+        Stopwatch deltaTime = new Stopwatch();
 
         public struct Bomb
         {
@@ -41,6 +42,8 @@ namespace BomberGirl
         public Form1()
         {
             InitializeComponent();
+
+            deltaTime.Start();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             grid = new Grid();
             gc = this.CreateGraphics();
@@ -76,13 +79,13 @@ namespace BomberGirl
            // Console.WriteLine(col + " " + row);
             if (player.moving_left)
             {
-                int col = (int)((player.posX-Constants.SPEED) / Constants.SPRITE_SIZE);
+                int col = (int)((player.posX-(float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE);
                 int row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                 int row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                 if ((Board[col, row1] == 0 && Board[col, row2] == 0) || (player.justBombed && ((Board[col, row1] == 3 && Board[col, row2] == 3) || (Board[col, row1] == 3 && Board[col, row2] == 0) || (Board[col, row1] == 0 && Board[col, row2] == 3))))
                 {
-                    player.posX -= Constants.SPEED;
-                    col = (int)((player.posX - Constants.SPEED) / Constants.SPRITE_SIZE);
+                    player.posX -= (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000;
+                    col = (int)((player.posX - (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE);
                     row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                     row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                     if (Board[col, row1] == 0 && Board[col, row2] == 0)
@@ -95,13 +98,13 @@ namespace BomberGirl
             }
             if(player.moving_right)
             {
-                int col = (int)((player.posX + Constants.SPEED) / Constants.SPRITE_SIZE);
+                int col = (int)((player.posX + (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE);
                 int row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                 int row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                 if ((Board[col+1, row1] == 0 && Board[col+1, row2] == 0) || (player.justBombed && ((Board[col+1, row1] == 3 && Board[col+1, row2] == 3) || (Board[col+1, row1] == 3 && Board[col+1, row2] == 0) || (Board[col+1, row1] == 0 && Board[col+1, row2] == 3))))
                 {
-                    player.posX += Constants.SPEED;
-                    col = (int)((player.posX + Constants.SPEED) / Constants.SPRITE_SIZE);
+                    player.posX += (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000;
+                    col = (int)((player.posX + (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE);
                     row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                     row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                     if (Board[col+1, row1] == 0 && Board[col+1, row2] == 0)
@@ -114,17 +117,17 @@ namespace BomberGirl
             {
                 int col1 = (int)((player.posX + Constants.COLLISION_ERROR)  / Constants.SPRITE_SIZE);
                 int col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
-                int row = (int)((player.posY - Constants.SPEED) / Constants.SPRITE_SIZE - 2);
+                int row = (int)((player.posY - (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE - 2);
                 if ((Board[col1, row] == 0 && Board[col2, row] == 0) || (player.justBombed && ((Board[col1, row] == 3 && Board[col2, row] == 3) || (Board[col1, row] == 3 && Board[col2, row] == 0) || (Board[col1, row] == 0 && Board[col2, row] == 3))))
                 {
                     col1 = (int)((player.posX + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
                     col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
-                    row = (int)((player.posY - Constants.SPEED) / Constants.SPRITE_SIZE - 2);
+                    row = (int)((player.posY - (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE - 2);
                     if (Board[col1, row] == 0 && Board[col2, row] == 0)
                     {
                         player.justBombed = false;
                     }
-                    player.posY -= Constants.SPEED;
+                    player.posY -= (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000;
                 }
                 
             }
@@ -132,13 +135,13 @@ namespace BomberGirl
             {
                 int col1 = (int)((player.posX + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
                 int col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
-                int row = (int)((player.posY + Constants.SPEED) / Constants.SPRITE_SIZE - 2);
+                int row = (int)((player.posY + (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE - 2);
                 if ((Board[col1, row+1] == 0 && Board[col2, row+1] == 0) || (player.justBombed && ((Board[col1, row+1] == 3 && Board[col2, row+1] == 3) || (Board[col1, row+1] == 3 && Board[col2, row+1] == 0) || (Board[col1, row+1] == 0 && Board[col2, row+1] == 3))))
                 {
-                    player.posY += Constants.SPEED;
+                    player.posY += (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000;
                     col1 = (int)((player.posX + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
                     col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
-                    row = (int)((player.posY + Constants.SPEED) / Constants.SPRITE_SIZE - 2);
+                    row = (int)((player.posY + (float)Constants.SPEED*deltaTime.ElapsedMilliseconds/1000) / Constants.SPRITE_SIZE - 2);
                     if (Board[col1, row+1] == 0 && Board[col2, row+1] == 0)
                     {
                         player.justBombed = false;
@@ -189,9 +192,13 @@ namespace BomberGirl
         protected override void OnPaint(PaintEventArgs e)
         {
             Graphics dc = e.Graphics;
+            deltaTime.Stop();
             draw(dc);
             updatePlayer(player1);
             updatePlayer(player2);
+            deltaTime.Reset();
+            deltaTime.Start();
+            
             base.OnPaint(e);
         }
 
@@ -381,8 +388,9 @@ namespace BomberGirl
 
         private void draw( Graphics gc)
         {
-
-
+            
+            pictureBox1.Refresh();
+            pictureBox2.Refresh();
 
             for (int i = 0; i < grid.getGridWidth(); i++)
             {
@@ -429,6 +437,24 @@ namespace BomberGirl
             }
         }
 
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/mainmenuC.png");
+            ((PictureBox)sender).Refresh();
+        }
+
+        private void pictureBox2_MouseUp(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/mainmenu.png");
+            ((PictureBox)sender).Refresh();
+            Application.Restart();
+        }
+        
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
             if (!player1.dead)

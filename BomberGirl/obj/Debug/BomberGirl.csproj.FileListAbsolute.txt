@@ -17,3 +17,4 @@ C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debu
 C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debug\BomberGirl.Properties.Resources.resources
 C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debug\BomberGirl.csproj.GenerateResource.Cache
 U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.Menu.resources
+C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debug\BomberGirl.Menu.resources

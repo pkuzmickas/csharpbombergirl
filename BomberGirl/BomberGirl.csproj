@@ -96,6 +96,18 @@
   <ItemGroup>
     <None Include="Sprites\1playerButton.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\2playerButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\exitButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\helpButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\mainmenu.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

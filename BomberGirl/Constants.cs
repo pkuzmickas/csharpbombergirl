@@ -19,5 +19,6 @@ namespace BomberGirl
         public const int BOMB_TIMER_IN_SECONDS = 2;
         public const int POWERUPS = 4;
         public const int PICKUPS_EACH = 4;
+        public const int ANIM_SPEED = 200;
     }
 }

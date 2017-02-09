@@ -12,12 +12,14 @@ namespace BomberGirl
         
         public Image spriteSheet {get;set;}
         private int ID;
-        private int Lives = 1;
+        private int Lives = 2;
         
         const int SPRITE_AMOUNT = 8;
-        private int Speed = Constants.SPEED;
+        private float Speed = Constants.SPEED;
         public Rectangle currentSprite { get; set; }
         public int spriteNr=0;
+        public int lastSpriteNr = 0;
+        public int bootsCollected=0;
         public float posX;
         public float posY;
         public bool moving_left = false;
@@ -66,7 +68,7 @@ namespace BomberGirl
             set { Lives = value; }
         }
 
-        public int speed
+        public float speed
         {
             get { return Speed; }
             set { Speed = value; }

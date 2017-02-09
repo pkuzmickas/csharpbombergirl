@@ -62,6 +62,7 @@ namespace BomberGirl
         public Form1(Form lastForm)
         {
             InitializeComponent();
+            this.ShowInTaskbar = true;
             this.lastForm = lastForm;
             //deltaTime.Start();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -250,6 +251,7 @@ namespace BomberGirl
                 {
                     player.lives--;
                     player.takingDamage = true;
+
                     if (player.lives == 0)
                     {
                         Console.WriteLine("Game OVER");
@@ -258,12 +260,10 @@ namespace BomberGirl
                     }
                     else
                     {
-                        Console.WriteLine(player.lives);
-
-                        Console.WriteLine("OUCH!");
                         System.Timers.Timer timer = new System.Timers.Timer(2000);
                         timer.Elapsed += (sender, e) => takingDamageHandler(sender, e, player);
                         timer.Enabled = true;
+
                     }
                 }
             }
@@ -286,7 +286,8 @@ namespace BomberGirl
                         }
                     case 3: //speed
                         {
-                            player.speed++;
+                            player.speed+=0.25f;
+                            player.bootsCollected++;
                             break;
                         }
                     case 4: //life
@@ -300,34 +301,35 @@ namespace BomberGirl
 
             if(player.id == 0)
             {
-                player1Labels[0].Text = "" + (player.speed-1);
+                player1Labels[0].Text = "" + (player.bootsCollected);
                 player1Labels[1].Text = "" + (player.lives);
                 player1Labels[2].Text = "" + (player.bombLimit-player.bombsPlaced);
                 player1Labels[3].Text = "" + (player.explosionSize-2);
             }
             if (player.id == 1)
             {
-                player2Labels[0].Text = "" + (player.speed - 1);
+                player2Labels[0].Text = "" + (player.bootsCollected);
                 player2Labels[1].Text = "" + (player.lives);
                 player2Labels[2].Text = "" + (player.bombLimit - player.bombsPlaced);
                 player2Labels[3].Text = "" + (player.explosionSize - 2);
             }
             if (player.id == 2)
             {
-                player3Labels[0].Text = "" + (player.speed - 1);
+                player3Labels[0].Text = "" + (player.bootsCollected);
                 player3Labels[1].Text = "" + (player.lives);
                 player3Labels[2].Text = "" + (player.bombLimit - player.bombsPlaced);
                 player3Labels[3].Text = "" + (player.explosionSize - 2);
             }
             if (player.id == 3)
             {
-                player4Labels[0].Text = "" + (player.speed - 1);
+                player4Labels[0].Text = "" + (player.bootsCollected);
                 player4Labels[1].Text = "" + (player.lives);
                 player4Labels[2].Text = "" + (player.bombLimit - player.bombsPlaced);
                 player4Labels[3].Text = "" + (player.explosionSize - 2);
 
             }
 
+            
 
             Invalidate();
         }
@@ -680,51 +682,65 @@ namespace BomberGirl
         }
         private void animate(object sender, EventArgs e, Player player)
         {
-            if (player.moving_up)
+            if (player.takingDamage && player.spriteNr != -1)
             {
-                if ((player.spriteNr > 0 && player.spriteNr < 8) || player.spriteNr == 9) player.spriteNr = 0;
-                else if (player.spriteNr == 0)
-                {
-                    player.spriteNr = 8;
-                }
-                else if (player.spriteNr == 8)
-                {
-                    player.spriteNr = 9;
-                }
-                else
-                {
-                    player.spriteNr = 0;
-                }
+                player.lastSpriteNr = player.spriteNr;
+                player.spriteNr = -1;
             }
-            else if (player.moving_down)
-            {
-                if (player.spriteNr > 0 && player.spriteNr < 3)
-                {
-                    player.spriteNr++;
-                }
-                else player.spriteNr = 1;
-            }
-            else if (player.moving_right)
-            {
-                if (player.spriteNr > 3 && player.spriteNr < 7)
-                {
-                    player.spriteNr++;
-                }
-                else
-                {
-                    player.spriteNr = 4;
-                }
-            }
-            else if (player.moving_left)
+            else
             {
 
-                if (player.spriteNr >= 10 && player.spriteNr < 13)
+                if (player.moving_up)
                 {
-                    player.spriteNr++;
+                    if ((player.spriteNr > 0 && player.spriteNr < 8) || player.spriteNr == 9) player.spriteNr = 0;
+                    else if (player.spriteNr == 0)
+                    {
+                        player.spriteNr = 8;
+                    }
+                    else if (player.spriteNr == 8)
+                    {
+                        player.spriteNr = 9;
+                    }
+                    else
+                    {
+                        player.spriteNr = 0;
+                    }
                 }
-                else player.spriteNr = 10;
+                else if (player.moving_down)
+                {
+                    if (player.spriteNr > 0 && player.spriteNr < 3)
+                    {
+                        player.spriteNr++;
+                    }
+                    else player.spriteNr = 1;
+                }
+                else if (player.moving_right)
+                {
+                    if (player.spriteNr > 3 && player.spriteNr < 7)
+                    {
+                        player.spriteNr++;
+                    }
+                    else
+                    {
+                        player.spriteNr = 4;
+                    }
+                }
+                else if (player.moving_left)
+                {
 
+                    if (player.spriteNr >= 10 && player.spriteNr < 13)
+                    {
+                        player.spriteNr++;
+                    }
+                    else player.spriteNr = 10;
+
+                }
+                else if (player.takingDamage)
+                {
+                    player.spriteNr = player.lastSpriteNr;
+                }
             }
+                
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)

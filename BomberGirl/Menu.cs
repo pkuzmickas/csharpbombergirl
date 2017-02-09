@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,7 +59,17 @@ namespace BomberGirl
         private void pictureBox3_MouseUp(object sender, MouseEventArgs e)
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/helpButton.png");
-
+            
+            StreamReader file = File.OpenText("help.txt");
+            string text = "";
+            string line = null;
+            while ((line = file.ReadLine()) != null)
+            {
+                text += line;
+                text += "\n";
+            }
+            file.Close();
+            MessageBox.Show(text, "", MessageBoxButtons.OK, MessageBoxIcon.Question);
         }
 
         private void pictureBox4_MouseDown(object sender, MouseEventArgs e)

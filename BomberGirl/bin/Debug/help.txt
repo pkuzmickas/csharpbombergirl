@@ -1,0 +1,17 @@
+Instructions:
+
+To beat the game you have to be the last man (in this case - the last GIRL) standing.
+
+Control your character by moving with WASD and placing a bomb with G for player 1)
+and ARROW keys with NUMPAD0 for player 2.
+
+Pickups:
+There are 4 different types of pickups you can collect. 
+The 'fire' which increases your explosion size by 1 tile. 
+The 'boot' which increases your movement speed.
+The 'bomb' which increases the amount of bombs you can place at a time.
+The 'heart' which increases the amount of lives you have.
+
+Destroy the boxes in your way, collect the pickups and beat the opponents in your
+way of becoming the LAST GIRL STANDING.
+Just don't blow yourself up :)

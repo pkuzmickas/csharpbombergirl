@@ -25,9 +25,12 @@ namespace BomberGirl
         int[,] Board;
         int[,] PowerupBoard;
         int[,] BombAnimBoard;
-        bool[,] ExplosionBoard;
+        int[,] ExplosionBoard;
+        int[,] ExplosionBoard2;
+        int[,] ExplosionBoard3;
+        int[,] ExplosionBoard4;
         bool[,] drawingPowerupsBoard;
-
+        int playersStanding = 2;
         Label[] player1Labels = new Label[4];
         Label[] player2Labels = new Label[4];
         Label[] player3Labels = new Label[4];
@@ -47,10 +50,11 @@ namespace BomberGirl
         Image player2score = Image.FromFile("Sprites/player2score.png");
         Image player3score = Image.FromFile("Sprites/player3score.png");
         Image player4score = Image.FromFile("Sprites/player4score.png");
-
+        Image explosions = Image.FromFile("Sprites/explosions.png");
+        int explosionRow = 0;
         //Stopwatch deltaTime = new Stopwatch();
         int deltaTime = 1;
-
+        bool gameOver = false;
 
         public struct Bomb
         {
@@ -58,7 +62,7 @@ namespace BomberGirl
             public System.Timers.Timer timer;
 
         }
-        
+
         public Form1(Form lastForm)
         {
             InitializeComponent();
@@ -71,14 +75,21 @@ namespace BomberGirl
             this.Show();
             Board = grid.getGrid();
             PowerupBoard = grid.getPowerupGrid();
-            ExplosionBoard = new bool[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
+            ExplosionBoard = new int[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
+            ExplosionBoard2 = new int[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
+            ExplosionBoard3 = new int[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
+            ExplosionBoard4 = new int[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
+
             drawingPowerupsBoard = new bool[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
             BombAnimBoard = new int[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
             for (int i = 0; i < Constants.BOARD_WIDTH; i++)
             {
                 for (int j = 0; j < Constants.BOARD_HEIGHT; j++)
                 {
-                    ExplosionBoard[i, j] = false;
+                    ExplosionBoard[i, j] = 0;
+                    ExplosionBoard2[i, j] = 0;
+                    ExplosionBoard3[i, j] = 0;
+                    ExplosionBoard4[i, j] = 0;
                     drawingPowerupsBoard[i, j] = false;
                     BombAnimBoard[i, j] = 0;
                 }
@@ -114,7 +125,7 @@ namespace BomberGirl
                 player1Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
                 player1Labels[i].Location = new System.Drawing.Point(p1LabelLoc, 85);
                 player1Labels[i].Size = new System.Drawing.Size(18, 20);
-                if(i==1) player1Labels[i].Text = "1";
+                if (i == 1) player1Labels[i].Text = "1";
                 else player1Labels[i].Text = "0";
                 Controls.Add(player1Labels[i]);
                 Controls.SetChildIndex(player1Labels[i], 3);
@@ -158,7 +169,6 @@ namespace BomberGirl
                 p3LabelLoc += 26;
                 p4LabelLoc += 26;
             }
-            Console.WriteLine(player1Labels[0].Parent.Name);
 
         }
 
@@ -247,15 +257,39 @@ namespace BomberGirl
                 int col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
                 int row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                 int row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
-                if (ExplosionBoard[col1, row1] || ExplosionBoard[col2, row2])
+                if (ExplosionBoard[col1, row1] != 0 || ExplosionBoard[col2, row2] != 0 || ExplosionBoard2[col1, row1] != 0 || ExplosionBoard2[col2, row2] != 0 || ExplosionBoard3[col1, row1] != 0 || ExplosionBoard3[col2, row2] != 0 || ExplosionBoard4[col1, row1] != 0 || ExplosionBoard4[col2, row2] != 0)
                 {
                     player.lives--;
                     player.takingDamage = true;
 
                     if (player.lives == 0)
                     {
-                        Console.WriteLine("Game OVER");
                         player.dead = true;
+                        playersStanding--;
+                        if (playersStanding == 1)
+                        {
+                            Image winner;
+                            if (!player1.dead)
+                            {
+                                winner = player1score;
+                            }
+                            else if (!player2.dead)
+                            {
+                                winner = player4score;
+                            }
+                            /*else if (!player3.dead)
+                            {
+                                winner = player3score;
+                            }*/
+                            else
+                            {
+                                winner = player2score;
+                            }
+                            WinScreen winScreen = new WinScreen(this, lastForm, winner);
+                            winScreen.Show();
+                            gameOver = true;
+
+                        }
 
                     }
                     else
@@ -286,7 +320,7 @@ namespace BomberGirl
                         }
                     case 3: //speed
                         {
-                            player.speed+=0.25f;
+                            player.speed += 0.25f;
                             player.bootsCollected++;
                             break;
                         }
@@ -296,15 +330,15 @@ namespace BomberGirl
                             break;
                         }
                 }
-                
+
             }
 
-            if(player.id == 0)
+            if (player.id == 0)
             {
                 player1Labels[0].Text = "" + (player.bootsCollected);
                 player1Labels[1].Text = "" + (player.lives);
-                player1Labels[2].Text = "" + (player.bombLimit-player.bombsPlaced);
-                player1Labels[3].Text = "" + (player.explosionSize-2);
+                player1Labels[2].Text = "" + (player.bombLimit - player.bombsPlaced);
+                player1Labels[3].Text = "" + (player.explosionSize - 2);
             }
             if (player.id == 1)
             {
@@ -329,7 +363,7 @@ namespace BomberGirl
 
             }
 
-            
+
 
             Invalidate();
         }
@@ -344,11 +378,15 @@ namespace BomberGirl
 
         protected override void OnPaint(PaintEventArgs e)
         {
+
             Graphics dc = e.Graphics;
             //deltaTime.Stop();
             draw(dc);
-            updatePlayer(player1);
-            updatePlayer(player2);
+            if (!gameOver)
+            {
+                updatePlayer(player1);
+                updatePlayer(player2);
+            }
             //deltaTime.Reset();
             //deltaTime.Start();
 
@@ -361,10 +399,10 @@ namespace BomberGirl
             {
                 if (e.KeyCode == Keys.A)
                 {
-                    
+
                     player1.moving_left = true;
                 }
-                if (e.KeyCode == Keys.D )
+                if (e.KeyCode == Keys.D)
                 {
                     player1.moving_right = true;
 
@@ -470,36 +508,100 @@ namespace BomberGirl
             Board[bomb.col, bomb.row] = 0;
             for (int i = bomb.col; i < bomb.col + 1 + player.explosionSize; i++)
             {
-                if (Board[i, bomb.row] != 1) ExplosionBoard[i, bomb.row] = true;
+                if (Board[i, bomb.row] != 1)
+                {
+                    if (bomb.col == i) ExplosionBoard[i, bomb.row] = 1;
+                    else if (Board[i + 1, bomb.row] != 1)
+                    {
+                        ExplosionBoard[i, bomb.row] = 2;
+                    }
+                    else
+                    {
+                        ExplosionBoard[i, bomb.row] = 3;
+                    }
+                    if (bomb.col + player.explosionSize == i)
+                    {
+                        ExplosionBoard[i, bomb.row] = 3;
+                    }
+                }
                 if (Board[i, bomb.row] == 2)
                 {
+                    ExplosionBoard[i, bomb.row] = 3;
                     break;
                 }
                 else if (Board[i, bomb.row] == 1) break;
             }
             for (int i = bomb.col; i > bomb.col - 1 - player.explosionSize; i--)
             {
-                if (Board[i, bomb.row] != 1) ExplosionBoard[i, bomb.row] = true;
+                if (Board[i, bomb.row] != 1)
+                {
+                    if (bomb.col == i) ExplosionBoard[i, bomb.row] = 1;
+                    else if (Board[i - 1, bomb.row] != 1)
+                    {
+                        ExplosionBoard[i, bomb.row] = 2;
+                    }
+                    else
+                    {
+                        ExplosionBoard[i, bomb.row] = 5;
+                    }
+                    if (bomb.col - player.explosionSize == i)
+                    {
+                        ExplosionBoard[i, bomb.row] = 5;
+                    }
+                }
                 if (Board[i, bomb.row] == 2)
                 {
+                    ExplosionBoard[i, bomb.row] = 5;
                     break;
                 }
                 else if (Board[i, bomb.row] == 1) break;
             }
             for (int i = bomb.row; i > bomb.row - 1 - player.explosionSize; i--)
             {
-                if (Board[bomb.col, i] != 1) ExplosionBoard[bomb.col, i] = true;
+                if (Board[bomb.col, i] != 1)
+                {
+                    if (bomb.row == i) ExplosionBoard[bomb.col, i] = 1;
+                    else if (Board[bomb.col, i - 1] != 1)
+                    {
+                        ExplosionBoard[bomb.col, i] = 7;
+                    }
+                    else
+                    {
+                        ExplosionBoard[bomb.col, i] = 6;
+                    }
+                    if (bomb.row - player.explosionSize == i)
+                    {
+                        ExplosionBoard[bomb.col, i] = 6;
+                    }
+                }
                 if (Board[bomb.col, i] == 2)
                 {
+                    ExplosionBoard[bomb.col, i] = 6;
                     break;
                 }
                 else if (Board[bomb.col, i] == 1) break;
             }
             for (int i = bomb.row; i < bomb.row + 1 + player.explosionSize; i++)
             {
-                if (Board[bomb.col, i] != 1) ExplosionBoard[bomb.col, i] = true;
+                if (Board[bomb.col, i] != 1)
+                {
+                    if (bomb.row == i) ExplosionBoard[bomb.col, i] = 1;
+                    else if (Board[bomb.col, i + 1] != 1)
+                    {
+                        ExplosionBoard[bomb.col, i] = 7;
+                    }
+                    else
+                    {
+                        ExplosionBoard[bomb.col, i] = 4;
+                    }
+                    if (bomb.row + player.explosionSize == i)
+                    {
+                        ExplosionBoard[bomb.col, i] = 4;
+                    }
+                }
                 if (Board[bomb.col, i] == 2)
                 {
+                    ExplosionBoard[bomb.col, i] = 4;
                     break;
                 }
                 else if (Board[bomb.col, i] == 1) break;
@@ -516,7 +618,7 @@ namespace BomberGirl
 
             for (int i = bomb.col; i < bomb.col + 1 + player.explosionSize; i++)
             {
-                if (Board[i, bomb.row] != 1) ExplosionBoard[i, bomb.row] = false;
+                if (Board[i, bomb.row] != 1) ExplosionBoard[i, bomb.row] = 0;
                 if (Board[i, bomb.row] == 2)
                 {
                     Board[i, bomb.row] = 0;
@@ -530,7 +632,7 @@ namespace BomberGirl
             }
             for (int i = bomb.col; i > bomb.col - 1 - player.explosionSize; i--)
             {
-                if (Board[i, bomb.row] != 1) ExplosionBoard[i, bomb.row] = false;
+                if (Board[i, bomb.row] != 1) ExplosionBoard[i, bomb.row] = 0;
                 if (Board[i, bomb.row] == 2)
                 {
                     Board[i, bomb.row] = 0;
@@ -544,7 +646,7 @@ namespace BomberGirl
             }
             for (int i = bomb.row; i > bomb.row - 1 - player.explosionSize; i--)
             {
-                if (Board[bomb.col, i] != 1) ExplosionBoard[bomb.col, i] = false;
+                if (Board[bomb.col, i] != 1) ExplosionBoard[bomb.col, i] = 0;
 
                 if (Board[bomb.col, i] == 2)
                 {
@@ -559,7 +661,7 @@ namespace BomberGirl
             }
             for (int i = bomb.row; i < bomb.row + 1 + player.explosionSize; i++)
             {
-                if (Board[bomb.col, i] != 1) ExplosionBoard[bomb.col, i] = false;
+                if (Board[bomb.col, i] != 1) ExplosionBoard[bomb.col, i] = 0;
 
                 if (Board[bomb.col, i] == 2)
                 {
@@ -643,12 +745,14 @@ namespace BomberGirl
                     }
                     if (Board[i, j] == 3)
                     {
-                       
+
                         gc.DrawImage(bombs, new Rectangle(i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE - 2, Constants.SPRITE_SIZE - 2), new Rectangle(BombAnimBoard[i, j] * Constants.SPRITE_SIZE, 0, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), GraphicsUnit.Pixel);
                     }
-                    if (ExplosionBoard[i, j] == true)
+                    if (ExplosionBoard[i, j] != 0)
                     {
-                        gc.DrawImage(explosion, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
+                        //gc.DrawImage(explosions, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
+                        gc.DrawImage(explosions, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, new Rectangle(0, Constants.SPRITE_SIZE * (ExplosionBoard[i,j]-1), Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), GraphicsUnit.Pixel);
+
                     }
 
                 }
@@ -656,7 +760,7 @@ namespace BomberGirl
 
             if (!player1.dead)
             {
-               
+
                 gc.DrawImage(player1.spriteSheet, new Rectangle((int)player1.posX, (int)player1.posY, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), new Rectangle(player1.spriteNr * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE * player1.id, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), GraphicsUnit.Pixel);
 
             }
@@ -666,8 +770,8 @@ namespace BomberGirl
                 gc.DrawImage(player2.spriteSheet, new Rectangle((int)player2.posX, (int)player2.posY, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), new Rectangle(player2.spriteNr * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE * player2.id, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), GraphicsUnit.Pixel);
             }
 
-            
-            
+
+
 
         }
         private void animate(object sender, EventArgs e, Bomb bomb)
@@ -740,7 +844,7 @@ namespace BomberGirl
                     player.spriteNr = player.lastSpriteNr;
                 }
             }
-                
+
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -758,6 +862,7 @@ namespace BomberGirl
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/mainmenu.png");
             ((PictureBox)sender).Refresh();
+
             lastForm.Show();
             this.Dispose();
         }

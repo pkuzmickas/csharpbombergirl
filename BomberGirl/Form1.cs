@@ -14,7 +14,7 @@ using System.Diagnostics;
 namespace BomberGirl
 {
 
-    
+
 
     public partial class Form1 : Form
     {
@@ -28,16 +28,25 @@ namespace BomberGirl
         bool[,] ExplosionBoard;
         bool[,] drawingPowerupsBoard;
 
-        Image wall = Image.FromFile("Sprites/wall.png");
-        Image grass = Image.FromFile("Sprites/grass.png");
-        Image box = Image.FromFile("Sprites/box.png");
+        Label[] player1Labels = new Label[4];
+        Label[] player2Labels = new Label[4];
+        Label[] player3Labels = new Label[4];
+        Label[] player4Labels = new Label[4];
+
+
+        Image wall = Image.FromFile("Sprites/wall2.png");
+        Image grass = Image.FromFile("Sprites/grass2.png");
+        Image box = Image.FromFile("Sprites/box2.png");
         Image bombs = Image.FromFile("Sprites/bombs.png");
         Image explosion = Image.FromFile("Sprites/explosion.png");
-        Image extraBomb = Image.FromFile("Sprites/extraBomb.png");
-        Image extraFlame = Image.FromFile("Sprites/extraFlame.png");
-        Image extraLife = Image.FromFile("Sprites/extraLife.png");
-        Image extraSpeed = Image.FromFile("Sprites/extraSpeed.png");
-
+        Image extraBomb = Image.FromFile("Sprites/extraBomb2.png");
+        Image extraFlame = Image.FromFile("Sprites/extraFlame2.png");
+        Image extraLife = Image.FromFile("Sprites/extraLife2.png");
+        Image extraSpeed = Image.FromFile("Sprites/extraSpeed2.png");
+        Image player1score = Image.FromFile("Sprites/player1score.png");
+        Image player2score = Image.FromFile("Sprites/player2score.png");
+        Image player3score = Image.FromFile("Sprites/player3score.png");
+        Image player4score = Image.FromFile("Sprites/player4score.png");
 
         //Stopwatch deltaTime = new Stopwatch();
         int deltaTime = 1;
@@ -47,9 +56,9 @@ namespace BomberGirl
         {
             public int col, row;
             public System.Timers.Timer timer;
-            
-        }
 
+        }
+        
         public Form1(Form lastForm)
         {
             InitializeComponent();
@@ -66,7 +75,7 @@ namespace BomberGirl
             BombAnimBoard = new int[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
             for (int i = 0; i < Constants.BOARD_WIDTH; i++)
             {
-                for(int j=0; j < Constants.BOARD_HEIGHT; j++)
+                for (int j = 0; j < Constants.BOARD_HEIGHT; j++)
                 {
                     ExplosionBoard[i, j] = false;
                     drawingPowerupsBoard[i, j] = false;
@@ -74,7 +83,7 @@ namespace BomberGirl
                 }
             }
 
-            player1 = new Player(2);
+            player1 = new Player(0);
             player1.posX = Constants.SPRITE_SIZE;
             player1.posY = Constants.SPRITE_SIZE * 3;
             System.Timers.Timer timer = new System.Timers.Timer(Constants.ANIM_SPEED);
@@ -87,28 +96,87 @@ namespace BomberGirl
             System.Timers.Timer timer2 = new System.Timers.Timer(Constants.ANIM_SPEED);
             timer2.Elapsed += (sender, e) => animate(sender, e, player2);
             timer2.Enabled = true;
-            
-            draw(gc);
-         
+
+            pictureBox4.Image = player1score;
+            pictureBox3.Image = player2score;
+            pictureBox5.Image = player3score;
+            pictureBox6.Image = player4score;
+
+            int p1LabelLoc = 12;
+            int p2LabelLoc = 115;
+            int p3LabelLoc = 417;
+            int p4LabelLoc = 527;
+            for (int i = 0; i < 4; i++)
+            {
+                player1Labels[i] = new System.Windows.Forms.Label();
+                player1Labels[i].BackColor = System.Drawing.Color.Gray;
+                player1Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+                player1Labels[i].Location = new System.Drawing.Point(p1LabelLoc, 85);
+                player1Labels[i].Size = new System.Drawing.Size(18, 20);
+                if(i==1) player1Labels[i].Text = "1";
+                else player1Labels[i].Text = "0";
+                Controls.Add(player1Labels[i]);
+                Controls.SetChildIndex(player1Labels[i], 3);
+                player1Labels[i].Refresh();
+
+                player2Labels[i] = new System.Windows.Forms.Label();
+                player2Labels[i].BackColor = System.Drawing.Color.Gray;
+                player2Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+                player2Labels[i].Location = new System.Drawing.Point(p2LabelLoc, 85);
+                player2Labels[i].Size = new System.Drawing.Size(18, 20);
+                if (i == 1) player2Labels[i].Text = "1";
+                else player2Labels[i].Text = "0";
+                Controls.Add(player2Labels[i]);
+                Controls.SetChildIndex(player2Labels[i], 3);
+                player2Labels[i].Refresh();
+
+                player3Labels[i] = new System.Windows.Forms.Label();
+                player3Labels[i].BackColor = System.Drawing.Color.Gray;
+                player3Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+                player3Labels[i].Location = new System.Drawing.Point(p3LabelLoc, 85);
+                player3Labels[i].Size = new System.Drawing.Size(18, 20);
+                if (i == 1) player3Labels[i].Text = "1";
+                else player3Labels[i].Text = "0";
+                Controls.Add(player3Labels[i]);
+                Controls.SetChildIndex(player3Labels[i], 3);
+                player3Labels[i].Refresh();
+
+                player4Labels[i] = new System.Windows.Forms.Label();
+                player4Labels[i].BackColor = System.Drawing.Color.Gray;
+                player4Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+                player4Labels[i].Location = new System.Drawing.Point(p4LabelLoc, 85);
+                player4Labels[i].Size = new System.Drawing.Size(18, 20);
+                if (i == 1) player4Labels[i].Text = "1";
+                else player4Labels[i].Text = "0";
+                Controls.Add(player4Labels[i]);
+                Controls.SetChildIndex(player4Labels[i], 3);
+                player4Labels[i].Refresh();
+
+                p1LabelLoc += 26;
+                p2LabelLoc += 26;
+                p3LabelLoc += 26;
+                p4LabelLoc += 26;
+            }
+            Console.WriteLine(player1Labels[0].Parent.Name);
+
         }
 
-        
 
         public void updatePlayer(Player player)
         {
 
-           
+
 
 
             if (player.moving_left)
             {
-                int col = (int)((player.posX-(float)player.speed*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE);
+                int col = (int)((player.posX - (float)player.speed * deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE);
                 int row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                 int row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                 if ((Board[col, row1] == 0 && Board[col, row2] == 0) || (player.justBombed && ((Board[col, row1] == 3 && Board[col, row2] == 3) || (Board[col, row1] == 3 && Board[col, row2] == 0) || (Board[col, row1] == 0 && Board[col, row2] == 3))))
                 {
-                    player.posX -= (float)player.speed*deltaTime/*.ElapsedMilliseconds/1000*/;
-                    col = (int)((player.posX - (float)player.speed*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE);
+                    player.posX -= (float)player.speed * deltaTime/*.ElapsedMilliseconds/1000*/;
+                    col = (int)((player.posX - (float)player.speed * deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE);
                     row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                     row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                     if (Board[col, row1] == 0 && Board[col, row2] == 0)
@@ -119,18 +187,18 @@ namespace BomberGirl
 
 
             }
-            if(player.moving_right)
+            if (player.moving_right)
             {
-                int col = (int)((player.posX + (float)player.speed*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE);
+                int col = (int)((player.posX + (float)player.speed * deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE);
                 int row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                 int row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
-                if ((Board[col+1, row1] == 0 && Board[col+1, row2] == 0) || (player.justBombed && ((Board[col+1, row1] == 3 && Board[col+1, row2] == 3) || (Board[col+1, row1] == 3 && Board[col+1, row2] == 0) || (Board[col+1, row1] == 0 && Board[col+1, row2] == 3))))
+                if ((Board[col + 1, row1] == 0 && Board[col + 1, row2] == 0) || (player.justBombed && ((Board[col + 1, row1] == 3 && Board[col + 1, row2] == 3) || (Board[col + 1, row1] == 3 && Board[col + 1, row2] == 0) || (Board[col + 1, row1] == 0 && Board[col + 1, row2] == 3))))
                 {
-                    player.posX += (float)player.speed*deltaTime/*.ElapsedMilliseconds/1000*/;
-                    col = (int)((player.posX + (float)player.speed*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE);
+                    player.posX += (float)player.speed * deltaTime/*.ElapsedMilliseconds/1000*/;
+                    col = (int)((player.posX + (float)player.speed * deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE);
                     row1 = (int)((player.posY + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
                     row2 = (int)((player.posY + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE - 2);
-                    if (Board[col+1, row1] == 0 && Board[col+1, row2] == 0)
+                    if (Board[col + 1, row1] == 0 && Board[col + 1, row2] == 0)
                     {
                         player.justBombed = false;
                     }
@@ -138,34 +206,34 @@ namespace BomberGirl
             }
             if (player.moving_up)
             {
-                int col1 = (int)((player.posX + Constants.COLLISION_ERROR)  / Constants.SPRITE_SIZE);
+                int col1 = (int)((player.posX + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
                 int col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
-                int row = (int)((player.posY - (float)player.speed*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE - 2);
+                int row = (int)((player.posY - (float)player.speed * deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE - 2);
                 if ((Board[col1, row] == 0 && Board[col2, row] == 0) || (player.justBombed && ((Board[col1, row] == 3 && Board[col2, row] == 3) || (Board[col1, row] == 3 && Board[col2, row] == 0) || (Board[col1, row] == 0 && Board[col2, row] == 3))))
                 {
                     col1 = (int)((player.posX + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
                     col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
-                    row = (int)((player.posY - (float)player.speed*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE - 2);
+                    row = (int)((player.posY - (float)player.speed * deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE - 2);
                     if (Board[col1, row] == 0 && Board[col2, row] == 0)
                     {
                         player.justBombed = false;
                     }
-                    player.posY -= (float)player.speed*deltaTime/*.ElapsedMilliseconds/1000*/;
+                    player.posY -= (float)player.speed * deltaTime/*.ElapsedMilliseconds/1000*/;
                 }
-                
+
             }
             if (player.moving_down)
             {
                 int col1 = (int)((player.posX + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
                 int col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
-                int row = (int)((player.posY + (float)player.speed*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE - 2);
-                if ((Board[col1, row+1] == 0 && Board[col2, row+1] == 0) || (player.justBombed && ((Board[col1, row+1] == 3 && Board[col2, row+1] == 3) || (Board[col1, row+1] == 3 && Board[col2, row+1] == 0) || (Board[col1, row+1] == 0 && Board[col2, row+1] == 3))))
+                int row = (int)((player.posY + (float)player.speed * deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE - 2);
+                if ((Board[col1, row + 1] == 0 && Board[col2, row + 1] == 0) || (player.justBombed && ((Board[col1, row + 1] == 3 && Board[col2, row + 1] == 3) || (Board[col1, row + 1] == 3 && Board[col2, row + 1] == 0) || (Board[col1, row + 1] == 0 && Board[col2, row + 1] == 3))))
                 {
-                    player.posY += (float)player.speed*deltaTime/*.ElapsedMilliseconds/1000*/;
+                    player.posY += (float)player.speed * deltaTime/*.ElapsedMilliseconds/1000*/;
                     col1 = (int)((player.posX + Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
                     col2 = (int)((player.posX + Constants.SPRITE_SIZE - Constants.COLLISION_ERROR) / Constants.SPRITE_SIZE);
-                    row = (int)((player.posY + (float)player.speed*deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE - 2);
-                    if (Board[col1, row+1] == 0 && Board[col2, row+1] == 0)
+                    row = (int)((player.posY + (float)player.speed * deltaTime/*.ElapsedMilliseconds/1000*/) / Constants.SPRITE_SIZE - 2);
+                    if (Board[col1, row + 1] == 0 && Board[col2, row + 1] == 0)
                     {
                         player.justBombed = false;
                     }
@@ -191,7 +259,7 @@ namespace BomberGirl
                     else
                     {
                         Console.WriteLine(player.lives);
-                        
+
                         Console.WriteLine("OUCH!");
                         System.Timers.Timer timer = new System.Timers.Timer(2000);
                         timer.Elapsed += (sender, e) => takingDamageHandler(sender, e, player);
@@ -199,12 +267,12 @@ namespace BomberGirl
                     }
                 }
             }
-            int c = (int)(player.posX + Constants.SPRITE_SIZE/2) / Constants.SPRITE_SIZE;
-            int r = (int)(player.posY + Constants.SPRITE_SIZE/2) / Constants.SPRITE_SIZE - 2;
+            int c = (int)(player.posX + Constants.SPRITE_SIZE / 2) / Constants.SPRITE_SIZE;
+            int r = (int)(player.posY + Constants.SPRITE_SIZE / 2) / Constants.SPRITE_SIZE - 2;
             if (drawingPowerupsBoard[c, r])
             {
                 drawingPowerupsBoard[c, r] = false;
-                switch(PowerupBoard[c,r])
+                switch (PowerupBoard[c, r])
                 {
                     case 1: //flame
                         {
@@ -227,7 +295,40 @@ namespace BomberGirl
                             break;
                         }
                 }
+                
             }
+
+            if(player.id == 0)
+            {
+                player1Labels[0].Text = "" + (player.speed-1);
+                player1Labels[1].Text = "" + (player.lives);
+                player1Labels[2].Text = "" + (player.bombLimit-player.bombsPlaced);
+                player1Labels[3].Text = "" + (player.explosionSize-2);
+            }
+            if (player.id == 1)
+            {
+                player2Labels[0].Text = "" + (player.speed - 1);
+                player2Labels[1].Text = "" + (player.lives);
+                player2Labels[2].Text = "" + (player.bombLimit - player.bombsPlaced);
+                player2Labels[3].Text = "" + (player.explosionSize - 2);
+            }
+            if (player.id == 2)
+            {
+                player3Labels[0].Text = "" + (player.speed - 1);
+                player3Labels[1].Text = "" + (player.lives);
+                player3Labels[2].Text = "" + (player.bombLimit - player.bombsPlaced);
+                player3Labels[3].Text = "" + (player.explosionSize - 2);
+            }
+            if (player.id == 3)
+            {
+                player4Labels[0].Text = "" + (player.speed - 1);
+                player4Labels[1].Text = "" + (player.lives);
+                player4Labels[2].Text = "" + (player.bombLimit - player.bombsPlaced);
+                player4Labels[3].Text = "" + (player.explosionSize - 2);
+
+            }
+
+
             Invalidate();
         }
 
@@ -237,7 +338,7 @@ namespace BomberGirl
             player.takingDamage = false;
         }
 
-     
+
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -248,7 +349,7 @@ namespace BomberGirl
             updatePlayer(player2);
             //deltaTime.Reset();
             //deltaTime.Start();
-            
+
             base.OnPaint(e);
         }
 
@@ -258,11 +359,13 @@ namespace BomberGirl
             {
                 if (e.KeyCode == Keys.A)
                 {
+                    
                     player1.moving_left = true;
                 }
-                if (e.KeyCode == Keys.D)
+                if (e.KeyCode == Keys.D )
                 {
                     player1.moving_right = true;
+
                 }
                 if (e.KeyCode == Keys.S)
                 {
@@ -272,7 +375,7 @@ namespace BomberGirl
                 {
                     player1.moving_up = true;
                 }
-                if (e.KeyCode == Keys.B)
+                if (e.KeyCode == Keys.G)
                 {
                     placeBomb(player1);
                 }
@@ -285,7 +388,7 @@ namespace BomberGirl
                     player2.moving_left = true;
 
                 }
-                if (e.KeyCode == Keys.Right)
+                else if (e.KeyCode == Keys.Right)
                 {
                     player2.moving_right = true;
                 }
@@ -400,7 +503,7 @@ namespace BomberGirl
                 else if (Board[bomb.col, i] == 1) break;
             }
 
-            
+
 
         }
 
@@ -411,7 +514,7 @@ namespace BomberGirl
 
             for (int i = bomb.col; i < bomb.col + 1 + player.explosionSize; i++)
             {
-                if(Board[i,bomb.row]!=1) ExplosionBoard[i, bomb.row] = false;
+                if (Board[i, bomb.row] != 1) ExplosionBoard[i, bomb.row] = false;
                 if (Board[i, bomb.row] == 2)
                 {
                     Board[i, bomb.row] = 0;
@@ -469,11 +572,23 @@ namespace BomberGirl
             }
         }
 
-        private void draw( Graphics gc)
+        private void draw(Graphics gc)
         {
-            
+
             pictureBox1.Refresh();
             pictureBox2.Refresh();
+            pictureBox3.Refresh();
+            pictureBox4.Refresh();
+            pictureBox5.Refresh();
+            pictureBox6.Refresh();
+            player1Labels[1].Refresh();
+            player1Labels[2].Refresh();
+            player1Labels[3].Refresh();
+            player1Labels[0].Refresh();
+            player4Labels[1].Refresh();
+            player4Labels[2].Refresh();
+            player4Labels[3].Refresh();
+            player4Labels[0].Refresh();
 
             for (int i = 0; i < grid.getGridWidth(); i++)
             {
@@ -482,7 +597,7 @@ namespace BomberGirl
                     if (Board[i, j] == 1)
                     {
 
-                        gc.DrawImage(wall, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
+                        gc.DrawImage(wall, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE);
 
                     }
                     else if (Board[i, j] == 0 || Board[i, j] == 3)
@@ -494,63 +609,68 @@ namespace BomberGirl
                     else if (Board[i, j] == 2)
                     {
 
-                        gc.DrawImage(box, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
+                        gc.DrawImage(box, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE);
 
                     }
-                    
+
                     if (drawingPowerupsBoard[i, j])
                     {
                         switch (PowerupBoard[i, j])
                         {
                             case 1:
                                 {
-                                    gc.DrawImage(extraFlame, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
+                                    gc.DrawImage(extraFlame, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE);
                                     break;
                                 }
                             case 2:
                                 {
-                                    gc.DrawImage(extraBomb, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
+                                    gc.DrawImage(extraBomb, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE);
                                     break;
                                 }
                             case 3:
                                 {
-                                    gc.DrawImage(extraSpeed, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
+                                    gc.DrawImage(extraSpeed, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE);
                                     break;
                                 }
                             case 4:
                                 {
-                                    gc.DrawImage(extraLife, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
+                                    gc.DrawImage(extraLife, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE);
                                     break;
                                 }
                         }
                     }
                     if (Board[i, j] == 3)
                     {
-                        Console.WriteLine(i + " " + j);
-                        Console.WriteLine(BombAnimBoard[i, j]);
-                        gc.DrawImage(bombs, new Rectangle(i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE - 2, Constants.SPRITE_SIZE - 2), new Rectangle(BombAnimBoard[i,j]*16, 0, 16, 16), GraphicsUnit.Pixel);
+                       
+                        gc.DrawImage(bombs, new Rectangle(i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE - 2, Constants.SPRITE_SIZE - 2), new Rectangle(BombAnimBoard[i, j] * Constants.SPRITE_SIZE, 0, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), GraphicsUnit.Pixel);
                     }
                     if (ExplosionBoard[i, j] == true)
                     {
                         gc.DrawImage(explosion, i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE + 2, Constants.SPRITE_SIZE + 2);
                     }
-                    
+
                 }
             }
 
             if (!player1.dead)
             {
-                
-                gc.DrawImage(player1.spriteSheet, new Rectangle((int)player1.posX, (int)player1.posY, Constants.SPRITE_SIZE - 5, Constants.SPRITE_SIZE - 5), new Rectangle(player1.spriteNr * 16, 16 * player1.id , 15, 15), GraphicsUnit.Pixel);
+               
+                gc.DrawImage(player1.spriteSheet, new Rectangle((int)player1.posX, (int)player1.posY, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), new Rectangle(player1.spriteNr * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE * player1.id, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), GraphicsUnit.Pixel);
+
             }
             if (!player2.dead)
             {
-                gc.DrawImage(player2.spriteSheet, new Rectangle((int)player2.posX, (int)player2.posY, Constants.SPRITE_SIZE - 5, Constants.SPRITE_SIZE - 5), new Rectangle(player2.spriteNr * 16, 16 * player2.id , 15, 15), GraphicsUnit.Pixel);
+
+                gc.DrawImage(player2.spriteSheet, new Rectangle((int)player2.posX, (int)player2.posY, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), new Rectangle(player2.spriteNr * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE * player2.id, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), GraphicsUnit.Pixel);
             }
+
+            
+            
+
         }
         private void animate(object sender, EventArgs e, Bomb bomb)
         {
-            BombAnimBoard[bomb.col,bomb.row]++;
+            BombAnimBoard[bomb.col, bomb.row]++;
 
             if (BombAnimBoard[bomb.col, bomb.row] == 6)
             {
@@ -560,63 +680,33 @@ namespace BomberGirl
         }
         private void animate(object sender, EventArgs e, Player player)
         {
-            if (player.moving_up) {
-                if (player.fliped)
-                {
-                    player.fliped = false;
-                    try
-                    {
-                        player.spriteSheet.RotateFlip(RotateFlipType.Rotate180FlipY);
-                    } catch(Exception)
-                    {
-                        Console.WriteLine("Flipping error");
-                    }
-                }
+            if (player.moving_up)
+            {
                 if ((player.spriteNr > 0 && player.spriteNr < 8) || player.spriteNr == 9) player.spriteNr = 0;
-                else if(player.spriteNr==0)
+                else if (player.spriteNr == 0)
                 {
                     player.spriteNr = 8;
                 }
-                else if(player.spriteNr==8)
+                else if (player.spriteNr == 8)
                 {
                     player.spriteNr = 9;
                 }
-            }
-            else if(player.moving_down)
-            {
-                if (player.fliped)
+                else
                 {
-                    player.fliped = false;
-                    try
-                    {
-                        player.spriteSheet.RotateFlip(RotateFlipType.Rotate180FlipY);
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("Flipping error");
-                    }
+                    player.spriteNr = 0;
                 }
+            }
+            else if (player.moving_down)
+            {
                 if (player.spriteNr > 0 && player.spriteNr < 3)
                 {
                     player.spriteNr++;
                 }
                 else player.spriteNr = 1;
             }
-            else if(player.moving_right)
+            else if (player.moving_right)
             {
-                if(player.fliped)
-                {
-                    player.fliped = false;
-                    try
-                    {
-                        player.spriteSheet.RotateFlip(RotateFlipType.Rotate180FlipY);
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("Flipping error");
-                    }
-                }
-                if(player.spriteNr >3 && player.spriteNr<7)
+                if (player.spriteNr > 3 && player.spriteNr < 7)
                 {
                     player.spriteNr++;
                 }
@@ -627,25 +717,12 @@ namespace BomberGirl
             }
             else if (player.moving_left)
             {
-                if (!player.fliped)
-                {
-                    player.fliped = true;
-                    try
-                    {
-                        player.spriteSheet.RotateFlip(RotateFlipType.Rotate180FlipY);
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("Flipping error");
-                    }
-                }
 
-
-                if (player.spriteNr > 1 && player.spriteNr < 5)
+                if (player.spriteNr >= 10 && player.spriteNr < 13)
                 {
                     player.spriteNr++;
                 }
-                else player.spriteNr = 2;
+                else player.spriteNr = 10;
 
             }
         }
@@ -668,7 +745,9 @@ namespace BomberGirl
             lastForm.Show();
             this.Dispose();
         }
-        
+
+
+
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
             if (!player1.dead)
@@ -692,6 +771,7 @@ namespace BomberGirl
             }
             if (!player2.dead)
             {
+
                 if (e.KeyCode == Keys.Left)
                 {
                     player2.moving_left = false;

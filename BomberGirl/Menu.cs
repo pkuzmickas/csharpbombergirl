@@ -13,11 +13,13 @@ namespace BomberGirl
 {
     public partial class Menu : Form
     {
+        System.Media.SoundPlayer sound;
         public Menu()
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
-
+            sound = new System.Media.SoundPlayer(Properties.Resources.Vicious);
+            sound.Play();
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -47,6 +49,7 @@ namespace BomberGirl
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/2playerButton.png");
             this.Hide();
+            sound.Stop();
             new Form1(this);
         }
 

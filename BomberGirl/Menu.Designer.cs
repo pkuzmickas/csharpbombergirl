@@ -102,6 +102,7 @@
             this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
+            this.MaximizeBox = false;
             this.Name = "Menu";
             this.Text = "Bomber Girl";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

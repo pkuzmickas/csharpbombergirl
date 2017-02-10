@@ -132,6 +132,18 @@
   <ItemGroup>
     <None Include="Sprites\winner.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="explosionSound.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Vicious.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Voltaic.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="winSound.wav" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

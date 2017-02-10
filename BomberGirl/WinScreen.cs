@@ -33,13 +33,17 @@ namespace BomberGirl
 
         private void button2_Click(object sender, EventArgs e)
         {
-            new Menu();
+            Menu m = new Menu();
+            m.Show();
+            gameForm.Dispose();
             this.Dispose();
         }
 
         private void WinScreen_FormClosing(object sender, FormClosingEventArgs e)
         {
-            new Menu();
+            Menu m = new Menu();
+            m.Show();
+            gameForm.Dispose();
             this.Dispose();
         }
     }

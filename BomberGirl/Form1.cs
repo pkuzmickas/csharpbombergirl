@@ -26,7 +26,7 @@ namespace BomberGirl
         int[,] PowerupBoard;
         int[,] BombAnimBoard;
         bool[,] drawingPowerupsBoard;
-        int numOfPlayers = 2;
+        public int numOfPlayers;
         int playersStanding;
        
         Label[] player1Labels = new Label[4];
@@ -60,9 +60,10 @@ namespace BomberGirl
             public int[,] ExplosionBoard;
         }
 
-        public Form1(Form lastForm)
+        public Form1(Form lastForm, int numOfPlayers)
         {
             InitializeComponent();
+            this.numOfPlayers = numOfPlayers;
             playersStanding = numOfPlayers;
             this.ShowInTaskbar = true;
             this.lastForm = lastForm;
@@ -83,7 +84,7 @@ namespace BomberGirl
                     BombAnimBoard[i, j] = 0;
                 }
             }
-            if (numOfPlayers == 2)
+            if (numOfPlayers >= 2)
             {
                 player1 = new Player(0);
                 player1.posX = Constants.SPRITE_SIZE;
@@ -102,8 +103,33 @@ namespace BomberGirl
                 pictureBox4.Image = player1score;
                 pictureBox3.Image = player2score;
             }
-            
+            if (numOfPlayers >= 3)
+            {
+                player3 = new Player(2);
+                player3.posX = Constants.SPRITE_SIZE* (Constants.BOARD_WIDTH-2);
+                player3.posY = Constants.SPRITE_SIZE * 3;
+                System.Timers.Timer timer = new System.Timers.Timer(Constants.ANIM_SPEED);
+                timer.Elapsed += (sender, e) => animate(sender, e, player3);
+                timer.Enabled = true;
+
+
+                
+               
+            }
+            if (numOfPlayers == 4)
+            {
+                player4 = new Player(3);
+                player4.posX = Constants.SPRITE_SIZE;
+                player4.posY = Constants.SPRITE_SIZE * (Constants.BOARD_HEIGHT);
+                System.Timers.Timer timer = new System.Timers.Timer(Constants.ANIM_SPEED);
+                timer.Elapsed += (sender, e) => animate(sender, e, player4);
+                timer.Enabled = true;
+
+
+                
+            }
             pictureBox5.Image = player3score;
+
             pictureBox6.Image = player4score;
 
             int p1LabelLoc = 12;
@@ -393,6 +419,14 @@ namespace BomberGirl
             {
                 updatePlayer(player1);
                 updatePlayer(player2);
+                if (numOfPlayers >= 3)
+                {
+                    updatePlayer(player3);
+                }
+                if (numOfPlayers == 4)
+                {
+                    updatePlayer(player4);
+                }
             }
             //deltaTime.Reset();
             //deltaTime.Start();
@@ -422,7 +456,7 @@ namespace BomberGirl
                 {
                     player1.moving_up = true;
                 }
-                if (e.KeyCode == Keys.G)
+                if (e.KeyCode == Keys.V)
                 {
                     placeBomb(player1);
                 }
@@ -430,26 +464,74 @@ namespace BomberGirl
 
             if (!player2.dead)
             {
-                if (e.KeyCode == Keys.Left)
+                if (e.KeyCode == Keys.J)
                 {
                     player2.moving_left = true;
 
                 }
-                else if (e.KeyCode == Keys.Right)
+                else if (e.KeyCode == Keys.L)
                 {
                     player2.moving_right = true;
                 }
-                if (e.KeyCode == Keys.Down)
+                if (e.KeyCode == Keys.K)
                 {
                     player2.moving_down = true;
                 }
-                if (e.KeyCode == Keys.Up)
+                if (e.KeyCode == Keys.I)
                 {
                     player2.moving_up = true;
                 }
-                if (e.KeyCode == Keys.NumPad0)
+                if (e.KeyCode == Keys.OemQuestion)
                 {
                     placeBomb(player2);
+                }
+            }
+            if (numOfPlayers>=3 && !player3.dead)
+            {
+                if (e.KeyCode == Keys.Left)
+                {
+                    player3.moving_left = true;
+
+                }
+                else if (e.KeyCode == Keys.Right)
+                {
+                    player3.moving_right = true;
+                }
+                if (e.KeyCode == Keys.Down)
+                {
+                    player3.moving_down = true;
+                }
+                if (e.KeyCode == Keys.Up)
+                {
+                    player3.moving_up = true;
+                }
+                if (e.KeyCode == Keys.NumPad0)
+                {
+                    placeBomb(player3);
+                }
+            }
+            if (numOfPlayers == 4 && !player4.dead)
+            {
+                if (e.KeyCode == Keys.NumPad4)
+                {
+                    player4.moving_left = true;
+
+                }
+                else if (e.KeyCode == Keys.NumPad6)
+                {
+                    player4.moving_right = true;
+                }
+                if (e.KeyCode == Keys.NumPad5)
+                {
+                    player4.moving_down = true;
+                }
+                if (e.KeyCode == Keys.NumPad8)
+                {
+                    player4.moving_up = true;
+                }
+                if (e.KeyCode == Keys.Add)
+                {
+                    placeBomb(player4);
                 }
             }
 
@@ -704,14 +786,31 @@ namespace BomberGirl
             pictureBox4.Refresh();
             pictureBox5.Refresh();
             pictureBox6.Refresh();
-            player1Labels[1].Refresh();
-            player1Labels[2].Refresh();
-            player1Labels[3].Refresh();
-            player1Labels[0].Refresh();
-            player2Labels[1].Refresh();
-            player2Labels[2].Refresh();
-            player2Labels[3].Refresh();
-            player2Labels[0].Refresh();
+            if (numOfPlayers >= 2)
+            {
+                player1Labels[1].Refresh();
+                player1Labels[2].Refresh();
+                player1Labels[3].Refresh();
+                player1Labels[0].Refresh();
+                player2Labels[1].Refresh();
+                player2Labels[2].Refresh();
+                player2Labels[3].Refresh();
+                player2Labels[0].Refresh();
+            }
+            if (numOfPlayers >= 3)
+            {
+                player3Labels[1].Refresh();
+                player3Labels[2].Refresh();
+                player3Labels[3].Refresh();
+                player3Labels[0].Refresh();
+            }
+            if (numOfPlayers == 4)
+            {
+                player4Labels[1].Refresh();
+                player4Labels[2].Refresh();
+                player4Labels[3].Refresh();
+                player4Labels[0].Refresh();
+            }
 
             for (int i = 0; i < grid.getGridWidth(); i++)
             {
@@ -784,6 +883,23 @@ namespace BomberGirl
             {
 
                 gc.DrawImage(player2.spriteSheet, new Rectangle((int)player2.posX, (int)player2.posY, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), new Rectangle(player2.spriteNr * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE * player2.id, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), GraphicsUnit.Pixel);
+            }
+            if (numOfPlayers >= 3)
+            {
+                if (!player3.dead)
+                {
+
+                    gc.DrawImage(player3.spriteSheet, new Rectangle((int)player3.posX, (int)player3.posY, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), new Rectangle(player3.spriteNr * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE * player3.id, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), GraphicsUnit.Pixel);
+
+                }
+            }
+            if (numOfPlayers == 4)
+            {
+                if (!player4.dead)
+                {
+
+                    gc.DrawImage(player4.spriteSheet, new Rectangle((int)player4.posX, (int)player4.posY, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), new Rectangle(player4.spriteNr * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE * player4.id, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), GraphicsUnit.Pixel);
+                }
             }
 
             foreach (Bomb b in bombsPlaced)
@@ -924,23 +1040,66 @@ namespace BomberGirl
             }
             if (!player2.dead)
             {
-
-                if (e.KeyCode == Keys.Left)
+                if (e.KeyCode == Keys.J)
                 {
                     player2.moving_left = false;
+
                 }
-                if (e.KeyCode == Keys.Right)
+                else if (e.KeyCode == Keys.L)
                 {
                     player2.moving_right = false;
                 }
-                if (e.KeyCode == Keys.Down)
+                if (e.KeyCode == Keys.K)
                 {
                     player2.moving_down = false;
                 }
-                if (e.KeyCode == Keys.Up)
+                if (e.KeyCode == Keys.I)
                 {
                     player2.moving_up = false;
                 }
+
+            }
+            if (numOfPlayers >= 3 && !player3.dead)
+            {
+                if (e.KeyCode == Keys.Left)
+                {
+                    player3.moving_left = false;
+
+                }
+                else if (e.KeyCode == Keys.Right)
+                {
+                    player3.moving_right = false;
+                }
+                if (e.KeyCode == Keys.Down)
+                {
+                    player3.moving_down = false;
+                }
+                if (e.KeyCode == Keys.Up)
+                {
+                    player3.moving_up = false;
+                }
+
+            }
+            if (numOfPlayers == 4 && !player4.dead)
+            {
+                if (e.KeyCode == Keys.NumPad4)
+                {
+                    player4.moving_left = false;
+
+                }
+                else if (e.KeyCode == Keys.NumPad6)
+                {
+                    player4.moving_right = false;
+                }
+                if (e.KeyCode == Keys.NumPad5)
+                {
+                    player4.moving_down = false;
+                }
+                if (e.KeyCode == Keys.NumPad8)
+                {
+                    player4.moving_up = false;
+                }
+
             }
 
         }

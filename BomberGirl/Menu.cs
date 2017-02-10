@@ -50,7 +50,7 @@ namespace BomberGirl
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/2playerButton.png");
             this.Hide();
             sound.Stop();
-            new Form1(this);
+            new Form1(this, 2);
         }
 
         private void pictureBox3_MouseDown(object sender, MouseEventArgs e)
@@ -85,6 +85,31 @@ namespace BomberGirl
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/exitButton.png");
             Application.Exit();
 
+        }
+
+        private void pictureBox1_MouseUp_1(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/3player.png");
+            this.Hide();
+            sound.Stop();
+            new Form1(this, 3);
+        }
+
+        private void pictureBox1_MouseUp_2(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/4player.png");
+            this.Hide();
+            sound.Stop();
+            new Form1(this, 4);
+        }
+        private void pictureBox1_MouseDown_1(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/3playerC.png");
+        }
+
+        private void pictureBox1_MouseDown_2(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/4playerC.png");
         }
     }
 }

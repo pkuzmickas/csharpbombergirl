@@ -144,6 +144,24 @@
   <ItemGroup>
     <None Include="winSound.wav" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\3player.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\4player.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\1playerButtonC.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\2playerButtonC.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\3playerC.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\4playerC.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

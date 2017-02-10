@@ -12,8 +12,9 @@ namespace BomberGirl
 {
     public partial class WinScreen : Form
     {
-        Form gameForm, menuForm;
-        public WinScreen(Form gameForm, Form menuForm, Image winner)
+        Form1 gameForm;
+        Form menuForm;
+        public WinScreen(Form1 gameForm, Form menuForm, Image winner)
         {
             InitializeComponent();
             this.menuForm = menuForm;
@@ -27,7 +28,7 @@ namespace BomberGirl
         {
            
             gameForm.Dispose();
-            new Form1(menuForm);
+            new Form1(menuForm, gameForm.numOfPlayers);
             this.Dispose();
         }
 

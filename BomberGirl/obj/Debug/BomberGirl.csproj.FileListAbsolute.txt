@@ -19,3 +19,4 @@ C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debu
 U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.Menu.resources
 C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debug\BomberGirl.Menu.resources
 U:\pacman\BomberGirl\BomberGirl\obj\Debug\BomberGirl.WinScreen.resources
+C:\Users\PKuzmickas\Desktop\Programming\uni\csharpbombergirl\BomberGirl\obj\Debug\BomberGirl.WinScreen.resources

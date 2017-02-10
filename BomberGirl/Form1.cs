@@ -20,13 +20,15 @@ namespace BomberGirl
     {
         Form lastForm;
         private Graphics gc;
-        Player player1, player2;
+        Player player1, player2, player3, player4;
         Grid grid;
         int[,] Board;
         int[,] PowerupBoard;
         int[,] BombAnimBoard;
         bool[,] drawingPowerupsBoard;
-        int playersStanding = 2;
+        int numOfPlayers = 2;
+        int playersStanding;
+       
         Label[] player1Labels = new Label[4];
         Label[] player2Labels = new Label[4];
         Label[] player3Labels = new Label[4];
@@ -61,6 +63,7 @@ namespace BomberGirl
         public Form1(Form lastForm)
         {
             InitializeComponent();
+            playersStanding = numOfPlayers;
             this.ShowInTaskbar = true;
             this.lastForm = lastForm;
             //deltaTime.Start();
@@ -80,23 +83,26 @@ namespace BomberGirl
                     BombAnimBoard[i, j] = 0;
                 }
             }
+            if (numOfPlayers == 2)
+            {
+                player1 = new Player(0);
+                player1.posX = Constants.SPRITE_SIZE;
+                player1.posY = Constants.SPRITE_SIZE * 3;
+                System.Timers.Timer timer = new System.Timers.Timer(Constants.ANIM_SPEED);
+                timer.Elapsed += (sender, e) => animate(sender, e, player1);
+                timer.Enabled = true;
 
-            player1 = new Player(0);
-            player1.posX = Constants.SPRITE_SIZE;
-            player1.posY = Constants.SPRITE_SIZE * 3;
-            System.Timers.Timer timer = new System.Timers.Timer(Constants.ANIM_SPEED);
-            timer.Elapsed += (sender, e) => animate(sender, e, player1);
-            timer.Enabled = true;
+                player2 = new Player(1);
+                player2.posX = (Constants.SCREEN_X / Constants.SPRITE_SIZE - 1) * Constants.SPRITE_SIZE;
+                player2.posY = (Constants.SCREEN_Y / Constants.SPRITE_SIZE - 2) * Constants.SPRITE_SIZE;
+                System.Timers.Timer timer2 = new System.Timers.Timer(Constants.ANIM_SPEED);
+                timer2.Elapsed += (sender, e) => animate(sender, e, player2);
+                timer2.Enabled = true;
 
-            player2 = new Player(3);
-            player2.posX = (Constants.SCREEN_X / Constants.SPRITE_SIZE - 1) * Constants.SPRITE_SIZE;
-            player2.posY = (Constants.SCREEN_Y / Constants.SPRITE_SIZE - 2) * Constants.SPRITE_SIZE;
-            System.Timers.Timer timer2 = new System.Timers.Timer(Constants.ANIM_SPEED);
-            timer2.Elapsed += (sender, e) => animate(sender, e, player2);
-            timer2.Enabled = true;
-
-            pictureBox4.Image = player1score;
-            pictureBox3.Image = player2score;
+                pictureBox4.Image = player1score;
+                pictureBox3.Image = player2score;
+            }
+            
             pictureBox5.Image = player3score;
             pictureBox6.Image = player4score;
 
@@ -106,54 +112,64 @@ namespace BomberGirl
             int p4LabelLoc = 527;
             for (int i = 0; i < 4; i++)
             {
-                player1Labels[i] = new System.Windows.Forms.Label();
-                player1Labels[i].BackColor = System.Drawing.Color.Gray;
-                player1Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-                player1Labels[i].Location = new System.Drawing.Point(p1LabelLoc, 85);
-                player1Labels[i].Size = new System.Drawing.Size(18, 20);
-                if (i == 1) player1Labels[i].Text = "1";
-                else player1Labels[i].Text = "0";
-                Controls.Add(player1Labels[i]);
-                Controls.SetChildIndex(player1Labels[i], 3);
-                player1Labels[i].Refresh();
+                if (numOfPlayers >= 2)
+                {
+                    player1Labels[i] = new System.Windows.Forms.Label();
+                    player1Labels[i].BackColor = System.Drawing.Color.Gray;
+                    player1Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+                    player1Labels[i].Location = new System.Drawing.Point(p1LabelLoc, 85);
+                    player1Labels[i].Size = new System.Drawing.Size(18, 20);
+                    if (i == 1) player1Labels[i].Text = "1";
+                    else player1Labels[i].Text = "0";
+                    Controls.Add(player1Labels[i]);
+                    Controls.SetChildIndex(player1Labels[i], 3);
+                    player1Labels[i].Refresh();
 
-                player2Labels[i] = new System.Windows.Forms.Label();
-                player2Labels[i].BackColor = System.Drawing.Color.Gray;
-                player2Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-                player2Labels[i].Location = new System.Drawing.Point(p2LabelLoc, 85);
-                player2Labels[i].Size = new System.Drawing.Size(18, 20);
-                if (i == 1) player2Labels[i].Text = "1";
-                else player2Labels[i].Text = "0";
-                Controls.Add(player2Labels[i]);
-                Controls.SetChildIndex(player2Labels[i], 3);
-                player2Labels[i].Refresh();
+                    player2Labels[i] = new System.Windows.Forms.Label();
+                    player2Labels[i].BackColor = System.Drawing.Color.Gray;
+                    player2Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+                    player2Labels[i].Location = new System.Drawing.Point(p2LabelLoc, 85);
+                    player2Labels[i].Size = new System.Drawing.Size(18, 20);
+                    if (i == 1) player2Labels[i].Text = "1";
+                    else player2Labels[i].Text = "0";
+                    Controls.Add(player2Labels[i]);
+                    Controls.SetChildIndex(player2Labels[i], 3);
+                    player2Labels[i].Refresh();
 
-                player3Labels[i] = new System.Windows.Forms.Label();
-                player3Labels[i].BackColor = System.Drawing.Color.Gray;
-                player3Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-                player3Labels[i].Location = new System.Drawing.Point(p3LabelLoc, 85);
-                player3Labels[i].Size = new System.Drawing.Size(18, 20);
-                if (i == 1) player3Labels[i].Text = "1";
-                else player3Labels[i].Text = "0";
-                Controls.Add(player3Labels[i]);
-                Controls.SetChildIndex(player3Labels[i], 3);
-                player3Labels[i].Refresh();
-
-                player4Labels[i] = new System.Windows.Forms.Label();
-                player4Labels[i].BackColor = System.Drawing.Color.Gray;
-                player4Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-                player4Labels[i].Location = new System.Drawing.Point(p4LabelLoc, 85);
-                player4Labels[i].Size = new System.Drawing.Size(18, 20);
-                if (i == 1) player4Labels[i].Text = "1";
-                else player4Labels[i].Text = "0";
-                Controls.Add(player4Labels[i]);
-                Controls.SetChildIndex(player4Labels[i], 3);
-                player4Labels[i].Refresh();
-
-                p1LabelLoc += 26;
-                p2LabelLoc += 26;
-                p3LabelLoc += 26;
-                p4LabelLoc += 26;
+                    p1LabelLoc += 26;
+                    p2LabelLoc += 26;
+                }
+                if (numOfPlayers >= 3)
+                {
+                    player3Labels[i] = new System.Windows.Forms.Label();
+                    player3Labels[i].BackColor = System.Drawing.Color.Gray;
+                    player3Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+                    player3Labels[i].Location = new System.Drawing.Point(p3LabelLoc, 85);
+                    player3Labels[i].Size = new System.Drawing.Size(18, 20);
+                    if (i == 1) player3Labels[i].Text = "1";
+                    else player3Labels[i].Text = "0";
+                    Controls.Add(player3Labels[i]);
+                    Controls.SetChildIndex(player3Labels[i], 3);
+                    player3Labels[i].Refresh();
+                    p3LabelLoc += 26;
+                }
+                if (numOfPlayers == 4)
+                {
+                    player4Labels[i] = new System.Windows.Forms.Label();
+                    player4Labels[i].BackColor = System.Drawing.Color.Gray;
+                    player4Labels[i].Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+                    player4Labels[i].Location = new System.Drawing.Point(p4LabelLoc, 85);
+                    player4Labels[i].Size = new System.Drawing.Size(18, 20);
+                    if (i == 1) player4Labels[i].Text = "1";
+                    else player4Labels[i].Text = "0";
+                    Controls.Add(player4Labels[i]);
+                    Controls.SetChildIndex(player4Labels[i], 3);
+                    player4Labels[i].Refresh();
+                    p4LabelLoc += 26;
+                }
+                
+               
+                
             }
 
         }
@@ -692,10 +708,10 @@ namespace BomberGirl
             player1Labels[2].Refresh();
             player1Labels[3].Refresh();
             player1Labels[0].Refresh();
-            player4Labels[1].Refresh();
-            player4Labels[2].Refresh();
-            player4Labels[3].Refresh();
-            player4Labels[0].Refresh();
+            player2Labels[1].Refresh();
+            player2Labels[2].Refresh();
+            player2Labels[3].Refresh();
+            player2Labels[0].Refresh();
 
             for (int i = 0; i < grid.getGridWidth(); i++)
             {

@@ -58,6 +58,12 @@
     <Compile Include="Menu.Designer.cs">
       <DependentUpon>Menu.cs</DependentUpon>
     </Compile>
+    <Compile Include="OnlineForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OnlineForm.Designer.cs">
+      <DependentUpon>OnlineForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,6 +78,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Menu.resx">
       <DependentUpon>Menu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OnlineForm.resx">
+      <DependentUpon>OnlineForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -161,6 +170,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Sprites\4playerC.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\online.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\normalBackground.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sprites\server.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

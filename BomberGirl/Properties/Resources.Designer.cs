@@ -172,6 +172,26 @@ namespace BomberGirl.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap normalBackground {
+            get {
+                object obj = ResourceManager.GetObject("normalBackground", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap online {
+            get {
+                object obj = ResourceManager.GetObject("online", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap player1score {
             get {
                 object obj = ResourceManager.GetObject("player1score", resourceCulture);
@@ -205,6 +225,16 @@ namespace BomberGirl.Properties {
         internal static System.Drawing.Bitmap player4score {
             get {
                 object obj = ResourceManager.GetObject("player4score", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap server {
+            get {
+                object obj = ResourceManager.GetObject("server", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -294,5 +294,17 @@ namespace BomberGirl
         {
             StartClient();
         }
+
+        private void pictureBox6_MouseDown_1(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/onlineC.png");
+        }
+
+        private void pictureBox6_MouseUp(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/online.png");
+            OnlineForm o = new OnlineForm();
+            o.Show();
+        }
     }
 }

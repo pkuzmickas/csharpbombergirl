@@ -26,5 +26,25 @@ namespace BomberGirl
         {
             Console.WriteLine("ga");
         }
+
+        private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/joinGameC.png");
+        }
+
+        private void pictureBox2_MouseUp(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/joinGame.png");
+        }
+
+        private void pictureBox3_MouseDown(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/createGameC.png");
+        }
+
+        private void pictureBox3_MouseUp(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/createGame.png");
+        }
     }
 }

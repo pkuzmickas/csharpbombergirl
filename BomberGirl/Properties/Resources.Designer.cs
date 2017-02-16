@@ -123,6 +123,16 @@ namespace BomberGirl.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap createGame {
+            get {
+                object obj = ResourceManager.GetObject("createGame", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap exitButton {
             get {
                 object obj = ResourceManager.GetObject("exitButton", resourceCulture);
@@ -145,6 +155,16 @@ namespace BomberGirl.Properties {
         internal static System.Drawing.Bitmap helpButton {
             get {
                 object obj = ResourceManager.GetObject("helpButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap joinGame {
+            get {
+                object obj = ResourceManager.GetObject("joinGame", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

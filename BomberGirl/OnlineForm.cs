@@ -24,7 +24,8 @@ namespace BomberGirl
 
         private void OnlineForm_Load(object sender, EventArgs e)
         {
-
+            //createGamePanel.Hide();
+            createGamePanel.Visible = false;
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -53,8 +54,12 @@ namespace BomberGirl
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/createGame.png");
             
-            Thread t = new Thread(StartListening);
-            t.Start();
+            //Thread t = new Thread(StartListening);
+            //t.Start();
+
+            panel1.Hide();
+            createGamePanel.Visible = true;
+            //createGamePanel.Show();
         }
 
         public static void StartListening()
@@ -182,6 +187,20 @@ namespace BomberGirl
             {
                 Console.WriteLine(e.ToString());
             }
+        }
+
+        private void createGamePanel_Paint(object sender, PaintEventArgs e)
+        {
+            this.textBox1.GotFocus += new EventHandler(textBox1_Focus); // enter event==get focus event 
+            this.textBox1.Text = "some default text...";
+            //createGamePanel.Refresh();
+            Console.WriteLine("wtf");
+        }
+
+        protected void textBox1_Focus(Object sender, EventArgs e)
+        {
+            textBox1.Text = "";
+           // createGamePanel.Refresh();
         }
     }
 }

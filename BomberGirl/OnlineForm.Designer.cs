@@ -164,6 +164,7 @@
             this.textBox2.Size = new System.Drawing.Size(383, 169);
             this.textBox2.TabIndex = 10;
             this.textBox2.Text = "SYSTEM: Player1 joined the game!";
+            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // numericUpDown1
             // 
@@ -252,8 +253,8 @@
             this.BackgroundImage = global::BomberGirl.Properties.Resources.normalBackground;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(637, 361);
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.createGamePanel);
+            this.Controls.Add(this.panel1);
             this.Name = "OnlineForm";
             this.Text = "OnlineForm";
             this.Load += new System.EventHandler(this.OnlineForm_Load);

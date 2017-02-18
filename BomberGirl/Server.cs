@@ -39,7 +39,7 @@ namespace BomberGirl
         public void DoWork()
         {
             byte[] bytes = new byte[1024];
-            send("connected");
+            send("");
             Console.WriteLine("again");
             while (true)
             {
@@ -53,8 +53,8 @@ namespace BomberGirl
                 }
                 else if(textRead != "kappa")
                 {
-                    chat += textRead;
-                    send(chat + "*CHAT");
+                    chatMsg(textRead);
+                    
                 }
                 waitingResponse = false;
             }
@@ -67,6 +67,11 @@ namespace BomberGirl
                 ns.Write(byteTime, 0, byteTime.Length);
                 waitingResponse = true;
             }
+        }
+        public void chatMsg(string text)
+        {
+            chat += text;
+            send(chat + "*CHAT");
         }
         public void changeServerName(string s)
         {

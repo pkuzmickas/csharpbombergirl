@@ -20,7 +20,7 @@ namespace BomberGirl
         private const string hostName = "localhost";
         public bool waitingResponse = false;
         public string chat = "ble kaip baisu";
-
+        public string serverName = "Server Name";
         public Client()
         {
 
@@ -48,14 +48,19 @@ namespace BomberGirl
 
                 int bytesRead = ns.Read(bytes, 0, bytes.Length);
                 readText = Encoding.ASCII.GetString(bytes, 0, bytesRead);
-                
+                if(readText == "connected")
+                {
+                    readText = "";
+                }
                 if (readText.IndexOf('*')!=-1 && readText.Split('*')[1] == "SVC")
                 {
                     readText = readText.Split('*')[0];
+                    serverName = readText;
                     send("kappa");
                 }
                 if (readText.IndexOf('*') != -1 && readText.Split('*')[1] == "CHAT")
                 {
+                    readText = readText.Split('*')[0];
                     chat = readText;
                     send("kappa");
                 }

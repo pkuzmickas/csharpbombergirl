@@ -7,25 +7,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Net;
-using System.Net.Sockets;
 using System.Threading;
 
 namespace BomberGirl
 {
     public partial class OnlineForm : Form
     {
-        public static string data = null;
-
+        
+        bool keyPressed = false, admin = false;
+        bool connection;
+        Thread serverThread;
+        Client client;
+        Server server;
+        
         public OnlineForm()
         {
             InitializeComponent();
+            
         }
 
         private void OnlineForm_Load(object sender, EventArgs e)
         {
-            //createGamePanel.Hide();
-            createGamePanel.Visible = false;
+            createGamePanel.Hide();
+
+            
+            client = new Client();
+            connection = client.connect();
+            if(connection)
+            {
+                
+                client.send("getServers()");
+                
+            }
+           
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -41,8 +55,12 @@ namespace BomberGirl
         private void pictureBox2_MouseUp(object sender, MouseEventArgs e)
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/joinGame.png");
-            Console.WriteLine("Joining: " + listBox1.SelectedItem);
-            StartClient();
+            panel1.Hide();
+
+            createGamePanel.Show();
+            textBox1.ReadOnly = true;
+            textBox1.Text = client.readText;
+            pictureBox5.Enabled = false;
         }
 
         private void pictureBox3_MouseDown(object sender, MouseEventArgs e)
@@ -54,153 +72,117 @@ namespace BomberGirl
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/createGame.png");
             
-            //Thread t = new Thread(StartListening);
-            //t.Start();
-
             panel1.Hide();
-            createGamePanel.Visible = true;
-            //createGamePanel.Show();
+          
+            createGamePanel.Show();
+            server = new Server();
+            serverThread = new Thread(server.listen);
+            serverThread.Start();
+            admin = true;
+            
         }
 
-        public static void StartListening()
-        {
-            // Data buffer for incoming data.  
-            byte[] bytes = new Byte[1024];
-
-            // Establish the local endpoint for the socket.  
-            // Dns.GetHostName returns the name of the   
-            // host running the application.  
-            IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);
-
-            // Create a TCP/IP socket.  
-            Socket listener = new Socket(AddressFamily.InterNetwork,
-            SocketType.Stream, ProtocolType.Tcp);
-
-            // Bind the socket to the local endpoint and   
-            // listen for incoming connections.  
-            try
-            {
-                listener.Bind(localEndPoint);
-                listener.Listen(10);
-
-                // Start listening for connections.  
-                while (true)
-                {
-                    Console.WriteLine("Waiting for a connection...");
-                    // Program is suspended while waiting for an incoming connection.  
-                    Socket handler = listener.Accept();
-                    data = null;
-
-                    // An incoming connection needs to be processed.  
-                    while (true)
-                    {
-                        bytes = new byte[1024];
-                        int bytesRec = handler.Receive(bytes);
-                        data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-                        if (data.IndexOf("<EOF>") > -1)
-                        {
-                            break;
-                        }
-                    }
-
-                    // Show the data on the console.  
-                    Console.WriteLine("Text received : {0}", data);
-
-                    // Echo the data back to the client.  
-                    byte[] msg = Encoding.ASCII.GetBytes(data);
-
-                    handler.Send(msg);
-                    handler.Shutdown(SocketShutdown.Both);
-                    handler.Close();
-                }
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-
-            Console.WriteLine("\nPress ENTER to continue...");
-            Console.Read();
-
-        }
-
-        public static void StartClient()
-        {
-            // Data buffer for incoming data.  
-            byte[] bytes = new byte[1024];
-
-            // Connect to a remote device.  
-            try
-            {
-                // Establish the remote endpoint for the socket.  
-                // This example uses port 11000 on the local computer.  
-                IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
-                IPAddress ipAddress = ipHostInfo.AddressList[0];
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
-
-                // Create a TCP/IP  socket.  
-                Socket sender = new Socket(AddressFamily.InterNetwork,
-                    SocketType.Stream, ProtocolType.Tcp);
-
-                // Connect the socket to the remote endpoint. Catch any errors.  
-                try
-                {
-                    sender.Connect(remoteEP);
-
-                    Console.WriteLine("Socket connected to {0}",
-                        sender.RemoteEndPoint.ToString());
-
-                    // Encode the data string into a byte array.  
-                    byte[] msg = Encoding.ASCII.GetBytes("This is a test<EOF>");
-
-                    // Send the data through the socket.  
-                    int bytesSent = sender.Send(msg);
-
-                    // Receive the response from the remote device.  
-                    int bytesRec = sender.Receive(bytes);
-                    Console.WriteLine("Echoed test = {0}",
-                        Encoding.ASCII.GetString(bytes, 0, bytesRec));
-
-                    // Release the socket.  
-                    sender.Shutdown(SocketShutdown.Both);
-                    sender.Close();
-
-                }
-                catch (ArgumentNullException ane)
-                {
-                    Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-                }
-                catch (SocketException se)
-                {
-                    Console.WriteLine("SocketException : {0}", se.ToString());
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Unexpected exception : {0}", e.ToString());
-                }
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
+        
 
         private void createGamePanel_Paint(object sender, PaintEventArgs e)
         {
-            this.textBox1.GotFocus += new EventHandler(textBox1_Focus); // enter event==get focus event 
-            this.textBox1.Text = "some default text...";
-            //createGamePanel.Refresh();
-            Console.WriteLine("wtf");
+
+            if (connection)
+            {
+
+                
+
+            }
+
         }
 
         protected void textBox1_Focus(Object sender, EventArgs e)
         {
+            if(textBox1.Text == "Server Name")
             textBox1.Text = "";
-           // createGamePanel.Refresh();
+
+           
+        }
+
+        private void textBox3_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && !keyPressed)
+            {
+                if (client.waitingResponse) server.send("kappa");
+                client.send("\r\nPlayer2: " + textBox3.Text);
+                textBox3.Text = "";
+                keyPressed = true;
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                textBox2.Text = client.chat;
+                
+            }
+        }
+
+        private void textBox3_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && keyPressed)
+            {
+                keyPressed = false;
+            }
+            
+        }
+
+        private void pictureBox5_MouseDown(object sender, MouseEventArgs e) //start game
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/startGameC.png");
+        }
+
+        private void pictureBox5_MouseUp(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/startGame.png");
+        }
+
+        private void pictureBox4_MouseDown(object sender, MouseEventArgs e) //leave game
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/leaveGameC.png");
+        }
+
+        private void OnlineForm_Paint(object sender, PaintEventArgs e)
+        {
+
+           
+
+
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            
+        }
+
+        private void pictureBox4_MouseUp(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/leaveGame.png");
+        }
+
+        private void pictureBox7_MouseDown(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/refreshC.png");
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if(server!=null)
+            server.changeServerName(textBox1.Text);
+            Console.WriteLine("textChanged");
+        }
+
+        private void pictureBox7_MouseUp(object sender, MouseEventArgs e)
+        {
+            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/refresh.png");
+            if (connection)
+            {
+
+                this.listBox1.Items.Clear();
+                this.listBox1.Items.AddRange(new object[] { client.readText });
+
+            }
         }
     }
 }

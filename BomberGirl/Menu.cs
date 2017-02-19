@@ -29,12 +29,16 @@ namespace BomberGirl
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             sound = new System.Media.SoundPlayer(Properties.Resources.Vicious);
             sound.Play();
+            panel1.Hide();
+           
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             
         }
+
+        
        
         // Event handlers for pressing on the '2 Player' button
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
@@ -177,8 +181,13 @@ namespace BomberGirl
         private void pictureBox6_MouseUp(object sender, MouseEventArgs e)
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/online.png");
+            panel1.Show();
+            label1.Show();
+            label1.Refresh();
             OnlineForm o = new OnlineForm();
+
             o.Show();
+            this.Hide();
         }
     }
 }

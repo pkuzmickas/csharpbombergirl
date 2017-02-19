@@ -8,20 +8,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using System.Net;
 
 
 namespace BomberGirl
 {
     public partial class OnlineForm : Form
     {
+        Image refreshImage = Image.FromFile("Sprites/refresh.png");
+        Image refreshImageClicked = Image.FromFile("Sprites/refreshC.png");
         delegate void SetTextCallback();
         bool keyPressed = false, admin = false;
-        bool connection;
         Thread serverThread;
         Thread chatThread;
         Client client;
         Server server;
-
+        string ip;
         public OnlineForm()
         {
             InitializeComponent();
@@ -34,19 +36,14 @@ namespace BomberGirl
 
 
             client = new Client();
-            connection = client.connect();
-            if (connection)
-            {
 
-                client.send("getServers()");
 
-            }
 
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
@@ -57,16 +54,20 @@ namespace BomberGirl
         private void pictureBox2_MouseUp(object sender, MouseEventArgs e)
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/joinGame.png");
-            panel1.Hide();
+            if (client.connected)
+            {
+                panel1.Hide();
 
-            client.send("\r\nPlayer2 has joined the game!");
-            createGamePanel.Show();
-            textBox1.ReadOnly = true;
-            textBox1.Text = client.serverName;
-            pictureBox5.Enabled = false;
-            textBox2.Text = client.chat;
-            chatThread = new Thread(loadChat);
-            chatThread.Start();
+                client.send("\r\nPlayer2 has joined the game!");
+                label3.Text = "2";
+                createGamePanel.Show();
+                textBox1.ReadOnly = true;
+                textBox1.Text = client.serverName;
+                pictureBox5.Enabled = false;
+                textBox2.Text = client.chat;
+                chatThread = new Thread(loadChat);
+                chatThread.Start();
+            }
         }
 
         private void pictureBox3_MouseDown(object sender, MouseEventArgs e)
@@ -84,6 +85,7 @@ namespace BomberGirl
             server = new Server();
             serverThread = new Thread(server.listen);
             serverThread.Start();
+
             chatThread = new Thread(loadChat);
             chatThread.Start();
             admin = true;
@@ -110,9 +112,10 @@ namespace BomberGirl
                 {
                     SetTextCallback d = new SetTextCallback(SetText);
                     this.Invoke(d);
-                } catch(Exception e)
+                }
+                catch (Exception e)
                 {
-                    Console.WriteLine("sesssion ended");
+                    Console.WriteLine("session ended");
                 }
             }
             else
@@ -126,7 +129,7 @@ namespace BomberGirl
                 {
                     textBox2.Text = client.chat;
                     textBox1.Text = client.serverName;
-                    
+
                 }
             }
         }
@@ -150,10 +153,10 @@ namespace BomberGirl
         {
             if (e.KeyCode == Keys.Enter && !keyPressed)
             {
-                if (connection)
+                if (client.connected)
                 {
                     client.send("\r\nPlayer2: " + textBox3.Text);
-                    
+
                 }
                 else if (server != null)
                 {
@@ -163,8 +166,10 @@ namespace BomberGirl
                 keyPressed = true;
                 e.Handled = true;
                 e.SuppressKeyPress = true;
-                textBox2.Text = client.chat;
-
+                if (client != null)
+                {
+                    textBox2.Text = client.chat;
+                }
             }
         }
 
@@ -185,6 +190,7 @@ namespace BomberGirl
         private void pictureBox5_MouseUp(object sender, MouseEventArgs e)
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/startGame.png");
+
         }
 
         private void pictureBox4_MouseDown(object sender, MouseEventArgs e) //leave game
@@ -208,11 +214,20 @@ namespace BomberGirl
         private void pictureBox4_MouseUp(object sender, MouseEventArgs e)
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/leaveGame.png");
+            //serverThread.Suspend();
+            //chatThread.Suspend();
+            //server.close();
+            //if (client.t != null)
+            //{
+            //    client.t.Suspend();
+            //}
+            //Application.Exit();
+            System.Environment.Exit(0);
         }
 
         private void pictureBox7_MouseDown(object sender, MouseEventArgs e)
         {
-            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/refreshC.png");
+            ((PictureBox)sender).BackgroundImage = refreshImageClicked;
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -220,7 +235,6 @@ namespace BomberGirl
             if (server != null)
             {
                 server.changeServerName(textBox1.Text);
-                Console.WriteLine("textChanged");
             }
         }
 
@@ -229,14 +243,51 @@ namespace BomberGirl
 
         }
 
+        private void OnlineForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+
+            ip = textBox4.Text;
+            
+            if (ip=="" || !client.connect(ip))
+            {
+                MessageBox.Show("Couldn't connect!");
+
+            }
+            else
+            {
+                panel2.Hide();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
+            IPAddress ipAddress = ipHostInfo.AddressList[2];
+            ip = ipHostInfo.AddressList[2].ToString();
+            if (ip == "" || !client.connect(ip))
+            {
+                MessageBox.Show("Couldn't connect!");
+
+            }
+            else
+            {
+                panel2.Hide();
+            }
+        }
+
         private void pictureBox7_MouseUp(object sender, MouseEventArgs e)
         {
-            ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/refresh.png");
-            if (connection)
+            ((PictureBox)sender).BackgroundImage = refreshImage;
+            if (client.connected)
             {
-
                 this.listBox1.Items.Clear();
-                this.listBox1.Items.AddRange(new object[] { client.serverName });
+                this.listBox1.Items.Add(client.serverName);
 
             }
         }

@@ -23,11 +23,12 @@ namespace BomberGirl
         Thread chatThread;
         Client client;
         Server server;
+        Form menu;
         string ip;
-        public OnlineForm()
+        public OnlineForm(Form menu)
         {
             InitializeComponent();
-
+            this.menu = menu;
         }
 
         private void OnlineForm_Load(object sender, EventArgs e)
@@ -82,7 +83,7 @@ namespace BomberGirl
             panel1.Hide();
 
             createGamePanel.Show();
-            server = new Server();
+            server = new Server(ip);
             serverThread = new Thread(server.listen);
             serverThread.Start();
 
@@ -190,7 +191,8 @@ namespace BomberGirl
         private void pictureBox5_MouseUp(object sender, MouseEventArgs e)
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/startGame.png");
-
+            this.Hide();
+            new Form1(menu, Int32.Parse(label3.Text), true);
         }
 
         private void pictureBox4_MouseDown(object sender, MouseEventArgs e) //leave game
@@ -269,7 +271,7 @@ namespace BomberGirl
         {
             IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[2];
-            ip = ipHostInfo.AddressList[2].ToString();
+            ip = ipAddress.ToString();
             if (ip == "" || !client.connect(ip))
             {
                 MessageBox.Show("Couldn't connect!");

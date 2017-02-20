@@ -23,17 +23,18 @@ namespace BomberGirl
         public string chat = "Player1 has joined the game!";
         public bool waitingResponse = false;
         bool firstConnect = false;
-        public Server()
+        string ip;
+        public Server(string ip)
         {
-            
+            this.ip = ip;
 
         }
         public void listen()
         {
             //IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
-            IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList[2];
-            Console.WriteLine(ipAddress.ToString());
+            IPHostEntry ipHostInfo = Dns.Resolve(ip);
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            
             listener = new TcpListener(ipAddress, 443);
             
             listener.Start();

@@ -33,6 +33,7 @@ namespace BomberGirl
         //The board to store the location of the powerups and their visibility (true if visible)
         bool[,] drawingPowerupsBoard;
         public int numOfPlayers;
+        bool online = false;
         //Players alive
         int playersStanding;
        
@@ -71,9 +72,10 @@ namespace BomberGirl
         }
 
         //The constructor which requires the menu to be given as a form and the number of players specified
-        public Form1(Form lastForm, int numOfPlayers)
+        public Form1(Form lastForm, int numOfPlayers, bool online)
         {
             InitializeComponent();
+            this.online = online;
             // Initializes the variables accordingly
             this.numOfPlayers = numOfPlayers;
             playersStanding = numOfPlayers;

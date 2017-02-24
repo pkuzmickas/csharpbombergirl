@@ -35,7 +35,7 @@ namespace BomberGirl
         {
            //Disposes of the game, win form and creates it from scratch
             gameForm.Dispose();
-            new Form1(menuForm, gameForm.numOfPlayers);
+            new Form1(menuForm, gameForm.numOfPlayers, gameForm.isOnline,gameForm.server, gameForm.client);
             this.Dispose();
         }
         //Event handler for the 'Main Menu' button

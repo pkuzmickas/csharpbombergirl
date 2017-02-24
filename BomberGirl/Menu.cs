@@ -55,7 +55,7 @@ namespace BomberGirl
             //Hides the menu, stops the music and starts the game
             this.Hide();
             sound.Stop();
-            new Form1(this, 2, false);
+            new Form1(this, 2, false, null, null);
         }
         // Event handlers for pressing on the 'help' button
         private void pictureBox3_MouseDown(object sender, MouseEventArgs e)
@@ -108,7 +108,7 @@ namespace BomberGirl
             //Hides the menu, stops the music and starts the game
             this.Hide();
             sound.Stop();
-            new Form1(this, 3, false);
+            new Form1(this, 3, false, null, null);
         }
         // Event handlers for pressing on the '4player' button
         private void pictureBox1_MouseUp_2(object sender, MouseEventArgs e)
@@ -118,7 +118,7 @@ namespace BomberGirl
             //Hides the menu, stops the music and starts the game
             this.Hide();
             sound.Stop();
-            new Form1(this, 4, false);
+            new Form1(this, 4, false, null, null);
         }
         private void pictureBox1_MouseDown_2(object sender, MouseEventArgs e)
         {

@@ -58,9 +58,9 @@ namespace BomberGirl
             if (client.connected)
             {
                 panel1.Hide();
-
-                client.send("\r\nPlayer2 has joined the game!");
-                label3.Text = "2";
+                client.send("addPlayer()");
+                
+               
                 createGamePanel.Show();
                 textBox1.ReadOnly = true;
                 textBox1.Text = client.serverName;
@@ -68,6 +68,7 @@ namespace BomberGirl
                 textBox2.Text = client.chat;
                 chatThread = new Thread(loadChat);
                 chatThread.Start();
+                client.send("\r\nPlayer" + client.numOfPlayers + " has joined the game!");
             }
         }
 
@@ -123,13 +124,21 @@ namespace BomberGirl
             {
                 if (server != null)
                 {
-
+                    label3.Text = server.numOfPlayers.ToString();
                     textBox2.Text = server.chat;
                 }
                 else if (client != null)
                 {
                     textBox2.Text = client.chat;
                     textBox1.Text = client.serverName;
+                    label3.Text = client.numOfPlayers.ToString();
+                    if(client.gameStarted)
+                    {
+                        
+                        new Form1(menu, client.numOfPlayers, true, null, client);
+                        client.gameStarted = false;
+                        this.Dispose();
+                    }
 
                 }
             }
@@ -191,8 +200,13 @@ namespace BomberGirl
         private void pictureBox5_MouseUp(object sender, MouseEventArgs e)
         {
             ((PictureBox)sender).BackgroundImage = Image.FromFile("Sprites/startGame.png");
-            this.Hide();
-            new Form1(menu, Int32.Parse(label3.Text), true);
+            if (server != null && server.numOfPlayers >= 2)
+            {
+                server.send("startGame()");
+
+                new Form1(menu, Int32.Parse(label3.Text), true, server, null);
+                this.Dispose();
+            }
         }
 
         private void pictureBox4_MouseDown(object sender, MouseEventArgs e) //leave game

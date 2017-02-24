@@ -10,7 +10,7 @@ using System.Net.Sockets;
 using System.Threading;
 namespace BomberGirl
 {
-    class Client
+    public class Client
     {
         private const int portNum = 443;
         public string readText = "";
@@ -21,7 +21,9 @@ namespace BomberGirl
         public bool waitingResponse = false;
         public string chat = "ble kaip baisu";
         public string serverName = "Server Name";
-        public bool connected = false;
+        public int numOfPlayers = 1, myPlayerID = 2;
+        public bool connected = false, gameStarted = false, placeBomb = false;
+        public float playerPosX= 0, playerPosY= 0;
         public Client()
         {
 
@@ -54,7 +56,7 @@ namespace BomberGirl
             {
 
                 int bytesRead = ns.Read(bytes, 0, bytes.Length);
-
+                Console.WriteLine(readText + " clientas cia ");
                 readText = Encoding.ASCII.GetString(bytes, 0, bytesRead);
                 if (!startMsg && readText != "bye")
                 {
@@ -62,12 +64,15 @@ namespace BomberGirl
                     ns.Close();
                     client.Close();
                     connected = false;
+                    Console.WriteLine(readText + " clientas cia1 ");
                     return;
                 } else if(readText == "bye")
                 {
                     connected = true;
                     startMsg = true;
+                    Console.WriteLine(readText + " clientas cia 2");
                 }
+               
                 if (readText == "connected")
                 {
                     readText = "";
@@ -83,6 +88,28 @@ namespace BomberGirl
                     readText = readText.Split('*')[0];
                     chat = readText;
                     send("kappa");
+                }
+                if (readText.IndexOf('*') != -1 && readText.Split('*')[1] == "PLAYERNR")
+                {
+                    readText = readText.Split('*')[0];
+                    numOfPlayers = Int32.Parse(readText);
+                    Console.WriteLine(readText + "SexYNX");
+                    send("kappa");
+                }
+                if (readText.IndexOf('*') != -1 && readText.Split('*')[1] == "PLAYERPOS")
+                {
+                    readText = readText.Split('*')[0];
+                    playerPosX = float.Parse(readText.Split(';')[0]);
+                    playerPosY = float.Parse(readText.Split(';')[1]);
+
+                }
+                if (readText=="startGame()")
+                {
+                    gameStarted = true;
+                }
+                if (readText == "plantBomb()")
+                {
+                    placeBomb = true;
                 }
 
                 waitingResponse = false;

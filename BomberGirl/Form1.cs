@@ -36,7 +36,9 @@ namespace BomberGirl
         bool online = false;
         //Players alive
         int playersStanding;
-       
+        public Server server;
+        public Client client;
+
         //Amount of powerups labels at the top of the screen below the player images
         Label[] player1Labels = new Label[4];
         Label[] player2Labels = new Label[4];
@@ -58,7 +60,7 @@ namespace BomberGirl
         Image player3score = Image.FromFile("Sprites/player3score.png");
         Image player4score = Image.FromFile("Sprites/player4score.png");
         Image explosions = Image.FromFile("Sprites/explosions.png");
-        
+
         bool gameOver = false;
         //Keeps a record of all the bombs placed on the screen to handle the explosions properly
         LinkedList<Bomb> bombsPlaced = new LinkedList<Bomb>();
@@ -70,12 +72,20 @@ namespace BomberGirl
             public System.Timers.Timer timer;
             public int[,] ExplosionBoard;
         }
-
+        public bool isOnline
+        {
+            get;
+        }
         //The constructor which requires the menu to be given as a form and the number of players specified
-        public Form1(Form lastForm, int numOfPlayers, bool online)
+        public Form1(Form lastForm, int numOfPlayers, bool online, Server server, Client client)
         {
             InitializeComponent();
             this.online = online;
+            if (online)
+            {
+                this.server = server;
+                this.client = client;
+            }
             // Initializes the variables accordingly
             this.numOfPlayers = numOfPlayers;
             playersStanding = numOfPlayers;
@@ -132,7 +142,7 @@ namespace BomberGirl
             {
                 // Initializes the Player class with the ID, positions
                 player3 = new Player(2);
-                player3.posX = Constants.SPRITE_SIZE* (Constants.BOARD_WIDTH-2);
+                player3.posX = Constants.SPRITE_SIZE * (Constants.BOARD_WIDTH - 2);
                 player3.posY = Constants.SPRITE_SIZE * 3;
                 // Starts animating the Player with a timer
                 System.Timers.Timer timer = new System.Timers.Timer(Constants.ANIM_SPEED);
@@ -142,8 +152,8 @@ namespace BomberGirl
                 timer.Enabled = true;
 
 
-                
-               
+
+
             }
             if (numOfPlayers == 4)
             {
@@ -159,7 +169,7 @@ namespace BomberGirl
                 timer.Enabled = true;
 
 
-                
+
             }
             // Sets the images at the top to the according player images
             pictureBox5.Image = player3score;
@@ -232,9 +242,9 @@ namespace BomberGirl
                     // Changes the distance of the new label
                     p4LabelLoc += 26;
                 }
-                
-               
-                
+
+
+
             }
 
         }
@@ -242,6 +252,47 @@ namespace BomberGirl
         // Function for updating the player's properties (position etc.)
         public void updatePlayer(Player player)
         {
+            if (online)
+            {
+                if (client != null)
+                {
+                    client.send(player.posX + ";" + player.posY + "*PLAYERPOS");
+                    if (numOfPlayers == 2)
+                    {
+                        if (client.playerPosX != 0 && client.playerPosY != 0)
+                        {
+                            player1.posX = client.playerPosX;
+                            player1.posY = client.playerPosY;
+                        }
+                    }
+                    if(client.placeBomb)
+                    {
+                        client.placeBomb = false;
+                        placeBomb(player1);
+                    }
+                }
+                if (server != null)
+                {
+                    server.send(player.posX + ";" + player.posY + "*PLAYERPOS");
+                    Console.WriteLine(player.posX);
+                    if (numOfPlayers == 2)
+                    {
+                        if (server.playerPosX != 0 && server.playerPosY != 0)
+                        {
+
+                            player2.posX = server.playerPosX;
+                            player2.posY = server.playerPosY;
+                        }
+                    }
+                    if (server.placeBomb)
+                    {
+                        server.placeBomb = false;
+                        placeBomb(player2);
+                    }
+                }
+
+            }
+
             // If moving left subtract the speed to the X position of the player 
             if (player.moving_left)
             {
@@ -361,14 +412,14 @@ namespace BomberGirl
                                 {
                                     winner = player2score;
                                 }
-                                else if (numOfPlayers>=3 && !player3.dead)
+                                else if (numOfPlayers >= 3 && !player3.dead)
                                 {
                                     winner = player3score;
                                 }
                                 else
                                 {
                                     winner = player4score;
-                                    
+
                                 }
                                 //Creates the winner screen and plays the winning music
                                 WinScreen winScreen = new WinScreen(this, lastForm, winner);
@@ -384,7 +435,7 @@ namespace BomberGirl
                             System.Timers.Timer timer = new System.Timers.Timer(2000);
                             timer.Elapsed += (sender, e) => takingDamageHandler(sender, e, player);
                             timer.Enabled = true;
-                           
+
 
                         }
                     }
@@ -481,16 +532,38 @@ namespace BomberGirl
             // If the game is not over updates the players
             if (!gameOver)
             {
-                updatePlayer(player1);
-                updatePlayer(player2);
-                if (numOfPlayers >= 3)
+                if (!online)
                 {
-                    updatePlayer(player3);
+                    updatePlayer(player1);
+                    updatePlayer(player2);
+                    if (numOfPlayers >= 3)
+                    {
+                        updatePlayer(player3);
+                    }
+                    if (numOfPlayers == 4)
+                    {
+                        updatePlayer(player4);
+                    }
                 }
-                if (numOfPlayers == 4)
+                else
                 {
-                    updatePlayer(player4);
+                    if (client != null)
+                    {
+                        switch (client.myPlayerID)
+                        {
+                            case 2:
+                                {
+                                    updatePlayer(player2);
+                                    break;
+                                }
+                        }
+                    }
+                    if (server != null)
+                    {
+                        updatePlayer(player1);
+                    }
                 }
+                
             }
             // Part of the OnPaint function (calls the parent function)
             base.OnPaint(e);
@@ -499,104 +572,211 @@ namespace BomberGirl
         private void Form1_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             // If the player is not dead records it's movement and bomb placement
-            if (!player1.dead)
+            if (!player1.dead || online)
             {
-                if (e.KeyCode == Keys.A)
+                if (!online)
                 {
+                    if (e.KeyCode == Keys.A)
+                    {
+                        player1.moving_left = true;
+                    }
+                    if (e.KeyCode == Keys.D)
+                    {
+                        player1.moving_right = true;
 
-                    player1.moving_left = true;
+                    }
+                    if (e.KeyCode == Keys.S)
+                    {
+                        player1.moving_down = true;
+                    }
+                    if (e.KeyCode == Keys.W)
+                    {
+                        player1.moving_up = true;
+                    }
+                    if (e.KeyCode == Keys.V)
+                    {
+                        placeBomb(player1);
+                    }
                 }
-                if (e.KeyCode == Keys.D)
+                else
                 {
-                    player1.moving_right = true;
+                    if (e.KeyCode == Keys.A)
+                    {
+                        if (client != null)
+                        {
+                            switch (client.myPlayerID)
+                            {
+                                case 2:
+                                    {
+                                        Console.WriteLine("ok");
+                                        player2.moving_left = true;
+                                        break;
+                                    }
+                            }
+                        }
+                        if (server != null)
+                        {
+                            player1.moving_left = true;
+                        }
 
-                }
-                if (e.KeyCode == Keys.S)
-                {
-                    player1.moving_down = true;
-                }
-                if (e.KeyCode == Keys.W)
-                {
-                    player1.moving_up = true;
-                }
-                if (e.KeyCode == Keys.V)
-                {
-                    placeBomb(player1);
+                    }
+                    if (e.KeyCode == Keys.D)
+                    {
+
+                        if (client != null)
+                        {
+                            switch (client.myPlayerID)
+                            {
+                                case 2:
+                                    {
+                                        player2.moving_right = true;
+                                        break;
+                                    }
+                            }
+                        }
+                        if (server != null)
+                        {
+                            player1.moving_right = true;
+                        }
+
+                    }
+                    if (e.KeyCode == Keys.S)
+                    {
+                        if (client != null)
+                        {
+                            switch (client.myPlayerID)
+                            {
+                                case 2:
+                                    {
+                                        player2.moving_down = true;
+                                        break;
+                                    }
+                            }
+                        }
+                        if (server != null)
+                        {
+                            player1.moving_down = true;
+                        }
+                    }
+                    if (e.KeyCode == Keys.W)
+                    {
+
+                        if (client != null)
+                        {
+                            switch (client.myPlayerID)
+                            {
+                                case 2:
+                                    {
+                                        player2.moving_up = true;
+                                        break;
+                                    }
+                            }
+                        }
+                        if (server != null)
+                        {
+                            player1.moving_up = true;
+
+                        }
+                    }
+                    if (e.KeyCode == Keys.V)
+                    {
+                        if (client != null)
+                        {
+                            switch (client.myPlayerID)
+                            {
+                                case 2:
+                                    {
+                                        client.send("plantBomb()");
+                                        placeBomb(player2);
+                                        break;
+                                    }
+                            }
+                        }
+                        if (server != null)
+                        {
+                            server.send("plantBomb()");
+                            placeBomb(player1);
+                        }
+                        
+                    }
                 }
             }
             // If the player is not dead records it's movement and bomb placement
-            if (!player2.dead)
+            if (!online)
             {
-                if (e.KeyCode == Keys.J)
+                if (!player2.dead)
                 {
-                    player2.moving_left = true;
+                    if (e.KeyCode == Keys.J)
+                    {
+                        player2.moving_left = true;
 
+                    }
+                    else if (e.KeyCode == Keys.L)
+                    {
+                        player2.moving_right = true;
+                    }
+                    if (e.KeyCode == Keys.K)
+                    {
+                        player2.moving_down = true;
+                    }
+                    if (e.KeyCode == Keys.I)
+                    {
+                        player2.moving_up = true;
+                    }
+                    if (e.KeyCode == Keys.OemQuestion)
+                    {
+                        placeBomb(player2);
+                    }
                 }
-                else if (e.KeyCode == Keys.L)
+                // If the player is not dead records it's movement and bomb placement
+                if (numOfPlayers >= 3 && !player3.dead)
                 {
-                    player2.moving_right = true;
-                }
-                if (e.KeyCode == Keys.K)
-                {
-                    player2.moving_down = true;
-                }
-                if (e.KeyCode == Keys.I)
-                {
-                    player2.moving_up = true;
-                }
-                if (e.KeyCode == Keys.OemQuestion)
-                {
-                    placeBomb(player2);
-                }
-            }
-            // If the player is not dead records it's movement and bomb placement
-            if (numOfPlayers>=3 && !player3.dead)
-            {
-                if (e.KeyCode == Keys.Left)
-                {
-                    player3.moving_left = true;
+                    if (e.KeyCode == Keys.Left)
+                    {
+                        player3.moving_left = true;
 
+                    }
+                    else if (e.KeyCode == Keys.Right)
+                    {
+                        player3.moving_right = true;
+                    }
+                    if (e.KeyCode == Keys.Down)
+                    {
+                        player3.moving_down = true;
+                    }
+                    if (e.KeyCode == Keys.Up)
+                    {
+                        player3.moving_up = true;
+                    }
+                    if (e.KeyCode == Keys.NumPad0)
+                    {
+                        placeBomb(player3);
+                    }
                 }
-                else if (e.KeyCode == Keys.Right)
+                // If the player is not dead records it's movement and bomb placement
+                if (numOfPlayers == 4 && !player4.dead)
                 {
-                    player3.moving_right = true;
-                }
-                if (e.KeyCode == Keys.Down)
-                {
-                    player3.moving_down = true;
-                }
-                if (e.KeyCode == Keys.Up)
-                {
-                    player3.moving_up = true;
-                }
-                if (e.KeyCode == Keys.NumPad0)
-                {
-                    placeBomb(player3);
-                }
-            }
-            // If the player is not dead records it's movement and bomb placement
-            if (numOfPlayers == 4 && !player4.dead)
-            {
-                if (e.KeyCode == Keys.NumPad4)
-                {
-                    player4.moving_left = true;
+                    if (e.KeyCode == Keys.NumPad4)
+                    {
+                        player4.moving_left = true;
 
-                }
-                else if (e.KeyCode == Keys.NumPad6)
-                {
-                    player4.moving_right = true;
-                }
-                if (e.KeyCode == Keys.NumPad5)
-                {
-                    player4.moving_down = true;
-                }
-                if (e.KeyCode == Keys.NumPad8)
-                {
-                    player4.moving_up = true;
-                }
-                if (e.KeyCode == Keys.Add)
-                {
-                    placeBomb(player4);
+                    }
+                    else if (e.KeyCode == Keys.NumPad6)
+                    {
+                        player4.moving_right = true;
+                    }
+                    if (e.KeyCode == Keys.NumPad5)
+                    {
+                        player4.moving_down = true;
+                    }
+                    if (e.KeyCode == Keys.NumPad8)
+                    {
+                        player4.moving_up = true;
+                    }
+                    if (e.KeyCode == Keys.Add)
+                    {
+                        placeBomb(player4);
+                    }
                 }
             }
             // Was used for testing (prints the grid)
@@ -671,12 +851,12 @@ namespace BomberGirl
         // The event handler for the bomb to explode
         private void explode(object source, ElapsedEventArgs e, Bomb bomb, Player player)
         {
-            
+
             player.bombsPlaced--;
             // Starts the sound of the bomb exploding
             System.Media.SoundPlayer sound = new System.Media.SoundPlayer("explosionSound.wav");
             sound.Play();
-           // Disables the timer
+            // Disables the timer
             ((System.Timers.Timer)source).Enabled = false;
             Board[bomb.col, bomb.row] = 0;
             // Checks the position of the explosion and gives a proper animation to it from the spritesheet (1-7)
@@ -799,7 +979,7 @@ namespace BomberGirl
                 if (Board[i, bomb.row] == 2)
                 {
                     Board[i, bomb.row] = 0;
-                    
+
                     if (PowerupBoard[i, bomb.row] > 0)
                     {
                         drawingPowerupsBoard[i, bomb.row] = true;
@@ -956,12 +1136,12 @@ namespace BomberGirl
 
                         gc.DrawImage(bombs, new Rectangle(i * Constants.SPRITE_SIZE, (j + 2) * Constants.SPRITE_SIZE, Constants.SPRITE_SIZE - 2, Constants.SPRITE_SIZE - 2), new Rectangle(BombAnimBoard[i, j] * Constants.SPRITE_SIZE, 0, Constants.SPRITE_SIZE, Constants.SPRITE_SIZE), GraphicsUnit.Pixel);
                     }
-                    
+
 
                 }
             }
 
-            
+
             // If the player is not dead, draws the current player sprite from the spritesheet
             if (!player1.dead)
             {
@@ -1121,92 +1301,177 @@ namespace BomberGirl
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
             // If the player is not dead stop it's movement in the current direction
-            if (!player1.dead)
+            if (!player1.dead || online)
             {
-                if (e.KeyCode == Keys.A)
+                if (!online)
                 {
-                    player1.moving_left = false;
+                    if (e.KeyCode == Keys.A)
+                    {
+                        player1.moving_left = false;
+                    }
+                    if (e.KeyCode == Keys.D)
+                    {
+                        player1.moving_right = false;
+                    }
+                    if (e.KeyCode == Keys.S)
+                    {
+                        player1.moving_down = false;
+                    }
+                    if (e.KeyCode == Keys.W)
+                    {
+                        player1.moving_up = false;
+                    }
                 }
-                if (e.KeyCode == Keys.D)
+                else
                 {
-                    player1.moving_right = false;
-                }
-                if (e.KeyCode == Keys.S)
-                {
-                    player1.moving_down = false;
-                }
-                if (e.KeyCode == Keys.W)
-                {
-                    player1.moving_up = false;
+                    if (e.KeyCode == Keys.A)
+                    {
+                        if (client != null)
+                        {
+                            switch (client.myPlayerID)
+                            {
+                                case 2:
+                                    {
+                                        player2.moving_left = false;
+                                        break;
+                                    }
+                            }
+                        }
+                        if (server != null)
+                        {
+                            player1.moving_left = false;
+                        }
+
+                    }
+                    if (e.KeyCode == Keys.D)
+                    {
+
+                        if (client != null)
+                        {
+                            switch (client.myPlayerID)
+                            {
+                                case 2:
+                                    {
+                                        player2.moving_right = false;
+                                        break;
+                                    }
+                            }
+                        }
+                        if (server != null)
+                        {
+                            player1.moving_right = false;
+                        }
+
+                    }
+                    if (e.KeyCode == Keys.S)
+                    {
+                        if (client != null)
+                        {
+                            switch (client.myPlayerID)
+                            {
+                                case 2:
+                                    {
+                                        player2.moving_down = false;
+                                        break;
+                                    }
+                            }
+                        }
+                        if (server != null)
+                        {
+                            player1.moving_down = false;
+                        }
+                    }
+                    if (e.KeyCode == Keys.W)
+                    {
+                        if (client != null)
+                        {
+                            switch (client.myPlayerID)
+                            {
+                                case 2:
+                                    {
+                                        player2.moving_up = false;
+                                        break;
+                                    }
+                            }
+                        }
+                        if (server != null)
+                        {
+                            player1.moving_up = false;
+                        }
+                    }
                 }
             }
-            // If the player is not dead stop it's movement in the current direction
-            if (!player2.dead)
+            if (!online)
             {
-                if (e.KeyCode == Keys.J)
+                // If the player is not dead stop it's movement in the current direction
+                if (!player2.dead)
                 {
-                    player2.moving_left = false;
+                    if (e.KeyCode == Keys.J)
+                    {
+                        player2.moving_left = false;
+
+                    }
+                    else if (e.KeyCode == Keys.L)
+                    {
+                        player2.moving_right = false;
+                    }
+                    if (e.KeyCode == Keys.K)
+                    {
+                        player2.moving_down = false;
+                    }
+                    if (e.KeyCode == Keys.I)
+                    {
+                        player2.moving_up = false;
+                    }
 
                 }
-                else if (e.KeyCode == Keys.L)
+                // If the player is not dead stop it's movement in the current direction
+                if (numOfPlayers >= 3 && !player3.dead)
                 {
-                    player2.moving_right = false;
+                    if (e.KeyCode == Keys.Left)
+                    {
+                        player3.moving_left = false;
+
+                    }
+                    else if (e.KeyCode == Keys.Right)
+                    {
+                        player3.moving_right = false;
+                    }
+                    if (e.KeyCode == Keys.Down)
+                    {
+                        player3.moving_down = false;
+                    }
+                    if (e.KeyCode == Keys.Up)
+                    {
+                        player3.moving_up = false;
+                    }
+
                 }
-                if (e.KeyCode == Keys.K)
+                // If the player is not dead stop it's movement in the current direction
+                if (numOfPlayers == 4 && !player4.dead)
                 {
-                    player2.moving_down = false;
-                }
-                if (e.KeyCode == Keys.I)
-                {
-                    player2.moving_up = false;
+                    if (e.KeyCode == Keys.NumPad4)
+                    {
+                        player4.moving_left = false;
+
+                    }
+                    else if (e.KeyCode == Keys.NumPad6)
+                    {
+                        player4.moving_right = false;
+                    }
+                    if (e.KeyCode == Keys.NumPad5)
+                    {
+                        player4.moving_down = false;
+                    }
+                    if (e.KeyCode == Keys.NumPad8)
+                    {
+                        player4.moving_up = false;
+                    }
+
                 }
 
             }
-            // If the player is not dead stop it's movement in the current direction
-            if (numOfPlayers >= 3 && !player3.dead)
-            {
-                if (e.KeyCode == Keys.Left)
-                {
-                    player3.moving_left = false;
-
-                }
-                else if (e.KeyCode == Keys.Right)
-                {
-                    player3.moving_right = false;
-                }
-                if (e.KeyCode == Keys.Down)
-                {
-                    player3.moving_down = false;
-                }
-                if (e.KeyCode == Keys.Up)
-                {
-                    player3.moving_up = false;
-                }
-
-            }
-            // If the player is not dead stop it's movement in the current direction
-            if (numOfPlayers == 4 && !player4.dead)
-            {
-                if (e.KeyCode == Keys.NumPad4)
-                {
-                    player4.moving_left = false;
-
-                }
-                else if (e.KeyCode == Keys.NumPad6)
-                {
-                    player4.moving_right = false;
-                }
-                if (e.KeyCode == Keys.NumPad5)
-                {
-                    player4.moving_down = false;
-                }
-                if (e.KeyCode == Keys.NumPad8)
-                {
-                    player4.moving_up = false;
-                }
-
-            }
-
         }
     }
 }
+

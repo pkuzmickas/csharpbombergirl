@@ -296,8 +296,8 @@
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(637, 361);
             this.Controls.Add(this.createGamePanel);
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
+            this.Controls.Add(this.panel1);
             this.Name = "OnlineForm";
             this.Text = "OnlineForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnlineForm_FormClosing);

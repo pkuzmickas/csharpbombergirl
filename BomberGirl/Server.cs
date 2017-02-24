@@ -12,7 +12,7 @@ using System.Net;
 
 namespace BomberGirl
 {
-    class Server
+    public class Server
     {
         delegate void SetTextCallback(string text);
         TcpListener listener;
@@ -21,9 +21,12 @@ namespace BomberGirl
         public Thread t = null;
         string serverName = "Server Name";
         public string chat = "Player1 has joined the game!";
-        public bool waitingResponse = false;
+        public bool waitingResponse = false, placeBomb = false;
         bool firstConnect = false;
         string ip;
+        public int numOfPlayers = 1;
+        public float playerPosX = 0, playerPosY = 0;
+
         public Server(string ip)
         {
             this.ip = ip;
@@ -55,16 +58,31 @@ namespace BomberGirl
                 int bytesRead = ns.Read(bytes, 0, bytes.Length);
                 string textRead = Encoding.ASCII.GetString(bytes, 0, bytesRead);
                 
-                Console.WriteLine("\n" + textRead + "gavo");
+               
                 if (textRead =="getServers()")
                 {
                     send(serverName + "*SVC");
-                    Console.WriteLine(serverName);
+                }
+                else if (textRead == "plantBomb()")
+                {
+                    placeBomb = true;
+                }
+                else if (textRead == "addPlayer()")
+                {
+                    numOfPlayers++;
+                    send(numOfPlayers + "*PLAYERNR");
                 }
                 else if (textRead == "hi" && !firstConnect)
                 {
                     send("bye");
                     firstConnect = true;
+                }
+                else if (textRead.IndexOf('*') != -1 && textRead.Split('*')[1] == "PLAYERPOS")
+                {
+                    textRead = textRead.Split('*')[0];
+                    playerPosX = float.Parse(textRead.Split(';')[0]);
+                    playerPosY = float.Parse(textRead.Split(';')[1]);
+                  
                 }
                 else if(textRead != "kappa")
                 {

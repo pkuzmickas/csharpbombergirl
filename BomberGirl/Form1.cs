@@ -256,16 +256,57 @@ namespace BomberGirl
             {
                 if (client != null)
                 {
-                    client.send(player.posX + ";" + player.posY + "*PLAYERPOS");
+                    if (player.moving_down) {
+                        client.send("down;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    else
+                    {
+                        client.send("notdown;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    if (player.moving_up)
+                    {
+                        client.send("up;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    else
+                    {
+                        client.send("notup;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    if (player.moving_left)
+                    {
+                        client.send("left;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    else
+                    {
+                        client.send("notleft;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    if (player.moving_right)
+                    {
+                        client.send("right;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    else
+                    {
+                        client.send("notright;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+
                     if (numOfPlayers == 2)
                     {
+                        /*if (client.playerPosX != 0 && client.playerPosY != 0)
+                        {
+                            player1.posX = client.playerPosX;
+                            player1.posY = client.playerPosY;
+
+                        }*/
+                        player1.moving_down = client.moving_down;
+                        player1.moving_up = client.moving_up;
+                        player1.moving_left = client.moving_left;
+                        player1.moving_right = client.moving_right;
                         if (client.playerPosX != 0 && client.playerPosY != 0)
                         {
                             player1.posX = client.playerPosX;
                             player1.posY = client.playerPosY;
                         }
                     }
-                    if(client.placeBomb)
+                    if (client.placeBomb)
                     {
                         client.placeBomb = false;
                         placeBomb(player1);
@@ -273,16 +314,56 @@ namespace BomberGirl
                 }
                 if (server != null)
                 {
-                    server.send(player.posX + ";" + player.posY + "*PLAYERPOS");
-                    Console.WriteLine(player.posX);
+                    if (player.moving_down)
+                    {
+                        server.send("down;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    else
+                    {
+                        server.send("notdown;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    if (player.moving_up)
+                    {
+                        server.send("up;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    else
+                    {
+                        server.send("notup;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    if (player.moving_left)
+                    {
+                        server.send("left;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    else
+                    {
+                        server.send("notleft;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    if (player.moving_right)
+                    {
+                        server.send("right;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
+                    else
+                    {
+                        server.send("notright;" + player.posX + ";" + player.posY + "*PLAYERPOS");
+                    }
                     if (numOfPlayers == 2)
                     {
-                        if (server.playerPosX != 0 && server.playerPosY != 0)
+                        /*if (server.playerPosX != 0 && server.playerPosY != 0)
                         {
 
                             player2.posX = server.playerPosX;
                             player2.posY = server.playerPosY;
+                        }*/
+                        player2.moving_down = server.moving_down;
+                        player2.moving_up = server.moving_up;
+                        player2.moving_left = server.moving_left;
+                        player2.moving_right = server.moving_right;
+                        if(server.playerPosX!=0 && server.playerPosY != 0)
+                        {
+                            player2.posX = server.playerPosX;
+                            player2.posY = server.playerPosY;
                         }
+                        
                     }
                     if (server.placeBomb)
                     {
@@ -381,6 +462,17 @@ namespace BomberGirl
                 }
             }
 
+            checkDamageCollisions(player);
+            
+
+            checkPickups(player);
+
+            // Refreshes the screen to be drawn correctly
+            Invalidate();
+        }
+
+        public void checkDamageCollisions(Player player)
+        {
             // If the player is not taking damage already, checks the full collision box of the player and sees if it collides with an explosion
             if (!player.takingDamage)
             {
@@ -441,6 +533,9 @@ namespace BomberGirl
                     }
                 }
             }
+        }
+        public void checkPickups(Player player)
+        {
             // Gets the player position column and row on the main board
             int c = (int)(player.posX + Constants.SPRITE_SIZE / 2) / Constants.SPRITE_SIZE;
             int r = (int)(player.posY + Constants.SPRITE_SIZE / 2) / Constants.SPRITE_SIZE - 2;
@@ -508,12 +603,7 @@ namespace BomberGirl
                 player4Labels[3].Text = "" + (player.explosionSize - 2);
 
             }
-
-
-            // Refreshes the screen to be drawn correctly
-            Invalidate();
         }
-
         // The event handler to stop the player from taking damage for a specific time
         private void takingDamageHandler(object source, EventArgs e, Player player)
         {
@@ -554,6 +644,8 @@ namespace BomberGirl
                             case 2:
                                 {
                                     updatePlayer(player2);
+                                    checkPickups(player1);
+                                    checkDamageCollisions(player1);
                                     break;
                                 }
                         }
@@ -561,6 +653,8 @@ namespace BomberGirl
                     if (server != null)
                     {
                         updatePlayer(player1);
+                        checkPickups(player2);
+                        checkDamageCollisions(player2);
                     }
                 }
                 
@@ -608,7 +702,6 @@ namespace BomberGirl
                             {
                                 case 2:
                                     {
-                                        Console.WriteLine("ok");
                                         player2.moving_left = true;
                                         break;
                                     }

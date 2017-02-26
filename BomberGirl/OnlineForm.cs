@@ -278,6 +278,12 @@ namespace BomberGirl
             else
             {
                 panel2.Hide();
+                if (client.connected)
+                {
+                    client.send("getServers()");
+                    this.listBox1.Items.Clear();
+                    this.listBox1.Items.Add(client.serverName);
+                }
             }
         }
 
@@ -294,6 +300,13 @@ namespace BomberGirl
             else
             {
                 panel2.Hide();
+                if (client.connected)
+                {
+                    client.send("getServers()");
+                    /*this.listBox1.Items.Clear();
+                    this.listBox1.Items.Add(client.serverName);*/
+                    Console.WriteLine(client.serverName);
+                }
             }
         }
 

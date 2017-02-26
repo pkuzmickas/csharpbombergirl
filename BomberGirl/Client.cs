@@ -22,8 +22,11 @@ namespace BomberGirl
         public string chat = "ble kaip baisu";
         public string serverName = "Server Name";
         public int numOfPlayers = 1, myPlayerID = 2;
+        // GAMEPLAY
         public bool connected = false, gameStarted = false, placeBomb = false;
         public float playerPosX= 0, playerPosY= 0;
+        public bool moving_up = false, moving_down = false, moving_right = false, moving_left = false;
+
         public Client()
         {
 
@@ -31,7 +34,6 @@ namespace BomberGirl
         public bool connect(string ip)
         {
             hostName = ip;
-            Console.WriteLine("Connecting " + hostName);
             try
             {
                 client = new TcpClient(hostName, portNum);
@@ -56,7 +58,6 @@ namespace BomberGirl
             {
 
                 int bytesRead = ns.Read(bytes, 0, bytes.Length);
-                Console.WriteLine(readText + " clientas cia ");
                 readText = Encoding.ASCII.GetString(bytes, 0, bytesRead);
                 if (!startMsg && readText != "bye")
                 {
@@ -64,13 +65,11 @@ namespace BomberGirl
                     ns.Close();
                     client.Close();
                     connected = false;
-                    Console.WriteLine(readText + " clientas cia1 ");
                     return;
                 } else if(readText == "bye")
                 {
                     connected = true;
                     startMsg = true;
-                    Console.WriteLine(readText + " clientas cia 2");
                 }
                
                 if (readText == "connected")
@@ -93,14 +92,27 @@ namespace BomberGirl
                 {
                     readText = readText.Split('*')[0];
                     numOfPlayers = Int32.Parse(readText);
-                    Console.WriteLine(readText + "SexYNX");
                     send("kappa");
                 }
                 if (readText.IndexOf('*') != -1 && readText.Split('*')[1] == "PLAYERPOS")
                 {
                     readText = readText.Split('*')[0];
-                    playerPosX = float.Parse(readText.Split(';')[0]);
-                    playerPosY = float.Parse(readText.Split(';')[1]);
+                    if (readText.Split(';')[0] == "down") moving_down = true;
+                    else if (readText.Split(';')[0] == "notdown") moving_down = false;
+                    if (readText.Split(';')[0] == "up") moving_up = true;
+                    else if (readText.Split(';')[0] == "notup") moving_up = false;
+                    if (readText.Split(';')[0] == "right") moving_right = true;
+                    else if (readText.Split(';')[0] == "notright") moving_right = false;
+                    if (readText.Split(';')[0] == "left") moving_left = true;
+                    else if (readText.Split(';')[0] == "notleft") moving_left = false;
+                    try
+                    {
+                        playerPosX = float.Parse(readText.Split(';')[1]);
+                        playerPosY = float.Parse(readText.Split(';')[2]);
+                    } catch(Exception e)
+                    {
+
+                    }
 
                 }
                 if (readText=="startGame()")

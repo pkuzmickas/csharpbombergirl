@@ -25,7 +25,9 @@ namespace BomberGirl
         bool firstConnect = false;
         string ip;
         public int numOfPlayers = 1;
+        // For gameplay
         public float playerPosX = 0, playerPosY = 0;
+        public bool moving_up = false, moving_down = false, moving_right = false, moving_left = false;
 
         public Server(string ip)
         {
@@ -80,9 +82,24 @@ namespace BomberGirl
                 else if (textRead.IndexOf('*') != -1 && textRead.Split('*')[1] == "PLAYERPOS")
                 {
                     textRead = textRead.Split('*')[0];
-                    playerPosX = float.Parse(textRead.Split(';')[0]);
-                    playerPosY = float.Parse(textRead.Split(';')[1]);
-                  
+                    if (textRead.Split(';')[0] == "down") moving_down = true;
+                    else if (textRead.Split(';')[0] == "notdown") moving_down = false;
+                    if (textRead.Split(';')[0] == "up") moving_up = true;
+                    else if (textRead.Split(';')[0] == "notup") moving_up = false;
+                    if (textRead.Split(';')[0] == "right") moving_right = true;
+                    else if (textRead.Split(';')[0] == "notright") moving_right = false;
+                    if (textRead.Split(';')[0] == "left") moving_left = true;
+                    else if (textRead.Split(';')[0] == "notleft") moving_left = false;
+                    try
+                    {
+                        playerPosX = float.Parse(textRead.Split(';')[1]);
+                        playerPosY = float.Parse(textRead.Split(';')[2]);
+                    } catch(Exception e)
+                    {
+
+                    } 
+
+
                 }
                 else if(textRead != "kappa")
                 {
